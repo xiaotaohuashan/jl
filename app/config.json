@@ -1,0 +1,51 @@
+{
+  //extraInfo 不要出现以`channel`为key的情况
+  /*
+  不声明extraInfo的channel默认使用的extraInfo
+  如果没有此项则没有默认extraInfo
+
+  华为市场：E房东-出租房管理软件；oppo市场：E房东-出租房管理软件；百度手机助手：E房东-出租房管理软件
+  */
+  "defaultExtraInfo": {
+    "key2": "20190509",
+    "key": "20190509"
+  },
+  "channelInfoList": [
+    {
+      "channel": "小米"
+    },
+    {
+      "channel": "360"
+    },
+    {
+      "channel": "阿里"
+    },
+    {
+      "channel": "vivo"
+    },
+    {
+      "channel": "联想"
+    },
+    {
+      "channel": "魅族"
+    },
+    {
+      "channel": "恋家"
+    },
+    {
+      "channel": "应用宝"
+    },
+    {
+      "channel": "华为"
+    },
+    {
+      "channel": "oppo"
+    },
+    {
+      "channel": "百度"
+    },
+    {
+      "channel": "三星"
+    }
+  ]
+}
