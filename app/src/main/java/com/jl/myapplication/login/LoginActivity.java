@@ -7,12 +7,11 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.log.LogUtils;
 import com.jl.core.network.httpInterface.DefaultObserver;
@@ -30,9 +29,6 @@ import com.jl.myapplication.model.HelpStoreParamForPage;
 import com.jl.myapplication.model.LoginBean;
 import com.jl.myapplication.model.PasswordBean;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 public class LoginActivity extends BaseActivity {
     private ActivityLoginBinding mBinding;
@@ -44,12 +40,14 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mBinding = DataBindingUtil.setContentView(this, getLayoutId());
+        mBinding = getBindView();
         if (!StringUtil.isEmpty(SettingsUtil.getTrueName()) && !StringUtil.isEmpty(SettingsUtil.getPassword()) && !StringUtil.isEmpty(SettingsUtil.getUserType())) {
             loginPw(mActivity, SettingsUtil.getTrueName(), SettingsUtil.getPassword(), SettingsUtil.getUserType());
         }
-//        Glide.with(mActivity).load("http://picm.bbzhi.com/mingxingbizhi/gaoqingtaiwankuanpingmeinvbizhi/gaoqingtaiwankuanpingmeinvbizhi_351522_m.jpg").into(mBinding.iv);
-        Glide.with(this).load("http://goo.gl/gEgYUd").into(mBinding.iv);
+        Intent it = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(it);
+        finish();
+
     }
 
     @Override
@@ -66,9 +64,7 @@ public class LoginActivity extends BaseActivity {
         mBinding.loginProtocol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(it);
-                finish();
+
             }
         });
         mBinding.loginWechat.setOnClickListener(new View.OnClickListener() {

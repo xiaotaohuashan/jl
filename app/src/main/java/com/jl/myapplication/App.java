@@ -1,12 +1,16 @@
 package com.jl.myapplication;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.jl.core.gateway.Gateway;
 import com.jl.core.network.AppService;
 import com.jl.core.social.SocialCenter;
 import com.tencent.bugly.crashreport.CrashReport;
+
+import cn.jpush.android.api.JPushInterface;
 
 public class App extends Application {
     private static App mApp;
@@ -30,6 +34,9 @@ public class App extends Application {
 
         //微信分享登录
         SocialCenter.getInstance().init();
+        //极光推送
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
     //获取全局的上下文
@@ -47,4 +54,5 @@ public class App extends Application {
         }
         return appService;
     }
+
 }

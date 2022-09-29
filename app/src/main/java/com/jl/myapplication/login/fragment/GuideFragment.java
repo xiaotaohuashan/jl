@@ -12,7 +12,6 @@ import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentGuideBinding;
 import com.jl.myapplication.login.LoginActivity;
 
-
 public class GuideFragment extends BaseFragment {
     private FragmentGuideBinding mBinding;
     protected Context mContext;
@@ -48,6 +47,16 @@ public class GuideFragment extends BaseFragment {
         }else {
             mBinding.goToLogin.setVisibility(View.GONE);
         }
-        Glide.with(getContext()).load("http://picm.bbzhi.com/mingxingbizhi/gaoqingtaiwankuanpingmeinvbizhi/gaoqingtaiwankuanpingmeinvbizhi_351522_m.jpg").into(mBinding.iv);
+        Glide.with(this).load(image).into(mBinding.iv);
+        mBinding.tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent it = new Intent(mContext, LoginActivity.class);
+                startActivity(it);
+                getActivity().finish();
+                // 用户点击过立即体验，以后引导页面不显示
+                SettingsUtil.setGuidePage(true);
+            }
+        });
     }
 }

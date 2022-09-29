@@ -18,7 +18,6 @@ import java.util.List;
 public class GuideActivity extends BaseActivity {
 
     private ViewPager mViewPager;
-    private List<Guide> mImages;
     private List<String> mNewImages = new ArrayList<>();
     // dots容器
     private LinearLayout mLayoutDots;
@@ -28,8 +27,6 @@ public class GuideActivity extends BaseActivity {
     private List<ImageView> mDots = new ArrayList<ImageView>();
     //当前索引
     private int mCurrPageIndex;
-    // 区分app来源：1.E房东2.E工长3.E租客
-    private int mAppType = 1;
 
     private void init(){
         mViewPager = findViewById(R.id.view_pager);
@@ -108,9 +105,9 @@ public class GuideActivity extends BaseActivity {
 
     private void getData() {
 
-        mNewImages.add("http://picm.bbzhi.com/mingxingbizhi/gaoqingtaiwankuanpingmeinvbizhi/gaoqingtaiwankuanpingmeinvbizhi_351522_m.jpg");
-        mNewImages.add("http://picm.bbzhi.com/mingxingbizhi/gaoqingtaiwankuanpingmeinvbizhi/gaoqingtaiwankuanpingmeinvbizhi_351522_m.jpg");
-        mNewImages.add("http://picm.bbzhi.com/mingxingbizhi/gaoqingtaiwankuanpingmeinvbizhi/gaoqingtaiwankuanpingmeinvbizhi_351522_m.jpg");
+        mNewImages.add("https://tc.16pic.com/00/93/62/16pic_9362798_b.png");
+        mNewImages.add("https://img-qn.51miz.com/preview/element/00/01/22/13/E-1221354-3186DE29.jpg");
+        mNewImages.add("https://pics4.baidu.com/feed/060828381f30e92421eb77eee4b292001f95f7e0.jpeg?token=0e013d11c770267d49400993b919c110");
         if (mNewImages.size() > 0){
             init();
         }else {

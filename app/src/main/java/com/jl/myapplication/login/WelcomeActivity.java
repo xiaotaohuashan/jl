@@ -1,13 +1,18 @@
 package com.jl.myapplication.login;
 
 import android.content.Intent;
-import android.view.View;
-
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import com.jl.core.base.activity.BaseActivity;
+import com.jl.core.utils.SettingsUtil;
+
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityWelcomeBinding;
 
 public class WelcomeActivity extends BaseActivity {
+    private CountDownTimer mCountDownTimer;
+
     private ActivityWelcomeBinding mBinding;
 
     @Override
@@ -17,22 +22,51 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        mCountDownTimer = new CountDownTimer(1000, 1000) {
+            @Override
+            public void onTick(long l) {
+            }
 
-        mBinding = getBindView();
-
-//        mBinding.getPresenter() = new WelcomeActivity();
-//        mBinding.btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+            @Override
+            public void onFinish() {
+                handler.sendEmptyMessage(0);
+            }
+        };
+        mCountDownTimer.start();
     }
 
-    public void onClickOne(View view){
-        Intent it = new Intent(WelcomeActivity.this, GuideActivity.class);
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    intoApp();
+                    break;
+            }
+        }
+    };
+
+    private void intoApp() {
+        //用户是否点击过立即体验
+        if (!SettingsUtil.isGuidePage()) {
+            // 去引导页面
+            gotoGuide();
+        } else {
+            gotoLogin();
+        }
+    }
+
+    //首次进入去引导页
+    private void gotoGuide() {
+        mBinding = getBindView();
+
+    }
+
+    //未登录去登录
+    private void gotoLogin() {
+        Intent it = new Intent(WelcomeActivity.this, LoginActivity.class);
         startActivity(it);
         finish();
     }
-
 }

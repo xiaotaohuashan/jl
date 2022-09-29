@@ -14,4 +14,8 @@
     <color name="text_black">#333333</color>
     <!--  细线-->
     <color name="line_gray">#e6e6e6</color>
+    <color name="secondaryColor">#FFFFFF</color>
+    <!--页面title对应的颜色-->
+    <color name="text1">#333333</color>
+
 </resources>

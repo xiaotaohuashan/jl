@@ -2,8 +2,8 @@ package com.jl.core.base.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,9 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
             setContentView(getLayoutId());
             viewDataBinding = DataBindingUtil.setContentView(this, getLayoutId());
         }
-        if (getLayoutId() != 0) {
-            setContentView(getLayoutId());
-        }
+
         mContext = this;
         mActivity = this;
         initData();
@@ -98,5 +96,36 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
         }
         lastClickTime = currentTime;
         return false;
+    }
+
+    @Override
+    public void jumpToActivity(Class<? extends BaseActivity> aClass) {
+        Intent intent = new Intent(this, aClass);
+        startActivity(intent);
+    }
+
+    @Override
+    public void jumpToActivity(Class<? extends BaseActivity> aClass, Bundle bundle) {
+        Intent intent = new Intent(this, aClass);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    @Override
+    public void jumpToActivityAndFinish(Class<? extends BaseActivity> aClass) {
+        jumpToActivity(aClass);
+        finish();
+    }
+
+    @Override
+    public void jumpToActivityAndFinish(Class<? extends BaseActivity> aClass, Bundle bundle) {
+        jumpToActivity(aClass, bundle);
+        finish();
+    }
+
+    @Override
+    public void jumpToActivityForResult(Class<? extends BaseActivity> aClass, int resultCode) {
+        Intent intent = new Intent(this, aClass);
+        startActivityForResult(intent, resultCode);
     }
 }

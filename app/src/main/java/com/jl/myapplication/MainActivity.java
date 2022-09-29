@@ -12,21 +12,21 @@ import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.ActivityManager;
 import com.jl.core.utils.FragmentUtils;
 import com.jl.myapplication.databinding.ActivityMainBinding;
-import com.jl.myapplication.home.fragment.CommodityFragment;
-import com.jl.myapplication.home.fragment.CustomerFragment;
-import com.jl.myapplication.home.fragment.DataFragment;
-import com.jl.myapplication.home.fragment.NotificationFragment;
-import com.jl.myapplication.home.fragment.TaskFragment;
+import com.jl.myapplication.home.fragment.MessageFragment;
+import com.jl.myapplication.home.fragment.MeFragment;
+import com.jl.myapplication.home.fragment.WaitFragment;
+import com.jl.myapplication.home.fragment.HomeFragment;
+import com.jl.myapplication.home.fragment.OrganizationFragment;
 
 
 public class MainActivity extends BaseActivity {
 
-    private ActivityMainBinding binding;
-    private NotificationFragment notificationFragment;
-    private TaskFragment taskFragment;
-    private CommodityFragment shoppingInfoFragment;
-    private DataFragment mDataFragment;
-    private CustomerFragment memberFragment;
+    private ActivityMainBinding mBinding;
+    private HomeFragment mHomeFragment;
+    private OrganizationFragment mOrganizationFragment;
+    private MessageFragment mMessageFragment;
+    private WaitFragment mWaitFragment;
+    private MeFragment mMeFragment;
     private Fragment mCurFragment;
     private long mkeyTime;
 
@@ -37,86 +37,101 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        binding = getBindView();
+        mBinding = getBindView();
         createFragment();
-        binding.tabMember.setSelected(true);
-        switchFragment(memberFragment);
+        mBinding.tabMe.setSelected(true);
+        switchFragment(mMeFragment);
 
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.tab_notification:
-//                closeFragment(v);
-//                switchFragment(notificationFragment);
-//                break;
-//            case R.id.tab_task:
-//                closeFragment(v);
-//                switchFragment(taskFragment);
-//                break;
-//            case R.id.tab_shopping:
-//                closeFragment(v);
-//                switchFragment(shoppingInfoFragment);
-//                break;
-//            case R.id.tab_message:
-//                closeFragment(v);
-//                switchFragment(mDataFragment);
-//                break;
-//            case R.id.tab_member:
-//                closeFragment(v);
-//                switchFragment(memberFragment);
-//                break;
-//        }
-//    }
+    @Override
+    protected void setListener() {
+        super.setListener();
+        mBinding.tabMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFragment(view);
+                switchFragment(mMessageFragment);
+            }
+        });
 
-    public void setFragmentPosition(int position){
-        if (position == 0){
-            closeFragment(binding.tabNotification);
-            switchFragment(notificationFragment);
-        }else if (position == 1){
-            closeFragment(binding.tabTask);
-            switchFragment(taskFragment);
-        }else if (position == 2){
-            closeFragment(binding.tabShopping);
-            switchFragment(shoppingInfoFragment);
-        }else if (position == 3){
-            closeFragment(binding.tabMessage);
-            switchFragment(mDataFragment);
-        }else if (position == 4){
-            closeFragment(binding.tabMember);
-            switchFragment(memberFragment);
-        }
+        mBinding.tabOrganization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFragment(view);
+                switchFragment(mOrganizationFragment);
+            }
+        });
+
+        mBinding.tabHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFragment(view);
+                switchFragment(mHomeFragment);
+            }
+        });
+
+        mBinding.tabWait.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFragment(view);
+                switchFragment(mWaitFragment);
+            }
+        });
+
+        mBinding.tabMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFragment(view);
+                switchFragment(mMeFragment);
+            }
+        });
     }
 
     private void createFragment() {
-        notificationFragment = new NotificationFragment();
-        taskFragment = new TaskFragment();
-        shoppingInfoFragment = new CommodityFragment();
-        mDataFragment = new DataFragment();
-        memberFragment = new CustomerFragment();
+        mMessageFragment = new MessageFragment();
+        mOrganizationFragment = new OrganizationFragment();
+        mMessageFragment = new MessageFragment();
+        mWaitFragment = new WaitFragment();
+        mMeFragment = new MeFragment();
     }
 
-    public void closeFragment(View view) {
-        binding.tabNotification.setSelected(false);
-        binding.tabTask.setSelected(false);
-        binding.tabShopping.setSelected(false);
-        binding.tabMessage.setSelected(false);
-        binding.tabMember.setSelected(false);
-        view.setSelected(true);
-//        ActAnimationUtils.ImgViewAlphaSize(view,5);
+    public void setFragmentPosition(int position) {
+        if (position == 0) {
+            closeFragment(mBinding.tabHome);
+            switchFragment(mHomeFragment);
+        } else if (position == 1) {
+            closeFragment(mBinding.tabOrganization);
+            switchFragment(mOrganizationFragment);
+        } else if (position == 2) {
+            closeFragment(mBinding.tabWait);
+            switchFragment(mMessageFragment);
+        } else if (position == 3) {
+            closeFragment(mBinding.tabMessage);
+            switchFragment(mWaitFragment);
+        } else if (position == 4) {
+            closeFragment(mBinding.tabMe);
+            switchFragment(mMeFragment);
+        }
     }
 
+    public void closeFragment (View view){
+        mBinding.tabHome.setSelected(false);
+        mBinding.tabOrganization.setSelected(false);
+        mBinding.tabWait.setSelected(false);
+        mBinding.tabMessage.setSelected(false);
+        mBinding.tabMe.setSelected(false);
+    }
     /**
      * 选择Fragment
      *
      * @param fragment
      */
-    public void switchFragment(Fragment fragment) {
+    public void switchFragment (Fragment fragment){
         mCurFragment = FragmentUtils.selectFragment(this, mCurFragment, fragment, R.id.layout_content);
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown ( int keyCode, KeyEvent event){
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if ((System.currentTimeMillis() - mkeyTime) > 2000) {
                 mkeyTime = System.currentTimeMillis();
@@ -128,5 +143,4 @@ public class MainActivity extends BaseActivity {
         }
         return false;
     }
-
 }

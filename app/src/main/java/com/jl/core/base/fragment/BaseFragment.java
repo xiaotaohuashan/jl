@@ -16,10 +16,6 @@ import androidx.fragment.app.Fragment;
 
 public abstract class BaseFragment extends Fragment {
 
-    /**
-     * 根布局
-     */
-    private View mRootView;
     private ViewDataBinding binding;
     public Activity mActivity;
 
@@ -37,11 +33,10 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(getLayoutId(), container, false);
         binding = DataBindingUtil.inflate(inflater, getLayoutId(),container , false);
         initView();
         setListener();
-        return mRootView;
+        return binding.getRoot();
     }
 
     public <T extends ViewDataBinding> T getBindView() {

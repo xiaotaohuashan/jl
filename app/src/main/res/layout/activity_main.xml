@@ -23,76 +23,6 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/tab_notification"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/selector_tab_home"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="12sp"
-                    android:textColor="@color/text_black"
-                    android:text="事务"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tab_task"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/selector_tab_task"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/text_black"
-                    android:text="店务"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tab_shopping"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/selector_tab_shop"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/text_black"
-                    android:text="商品"/>
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/tab_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -112,11 +42,11 @@
                     android:textSize="12sp"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/text_black"
-                    android:text="数据"/>
+                    android:text="消息"/>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/tab_member"
+                android:id="@+id/tab_organization"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -127,7 +57,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/selector_tab_customer"/>
+                    android:src="@drawable/selector_tab_organization"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -135,7 +65,77 @@
                     android:textSize="12sp"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/text_black"
-                    android:text="会员"/>
+                    android:text="组织"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/tab_home"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/selector_tab_home"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_black"
+                    android:text="首页"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab_wait"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/selector_tab_wait"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/text_black"
+                    android:text="待办"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab_me"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/selector_tab_me"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/text_black"
+                    android:text="我"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
