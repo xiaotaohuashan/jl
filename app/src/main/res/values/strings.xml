@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">LowVersion</string>
 
     <string name="network_error_hint">数据异常</string>
+
+    <string name="tip_need_permission_explain">APP的正常运行需要以下权限:\r\n%s\r\n请前往设置页面去设置</string>
 </resources>

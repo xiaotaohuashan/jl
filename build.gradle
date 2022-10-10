@@ -1,38 +1,29 @@
-//buildscript {
-//    repositories {
-//        google()
-//        jcenter()
-//        mavenCentral()
-//        // hms
-//        maven { url 'http://developer.huawei.com/repo/'}
-//        // fcm
-//        maven { url "https://maven.google.com" }
-//    }
-//
-//    dependencies {
-//        // fcm
-//        classpath 'com.google.gms:google-services:4.3.8'
-//        // hms
-//        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
-//    }
-//}
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
 
-plugins {
-    id 'com.android.application' version '7.2.2' apply false
-    id 'com.android.library' version '7.2.2' apply false
+
+    }
 }
 
-//allprojects {
-//    repositories {
-//        google()
-//        jcenter()
-//        mavenCentral()
-//        //hms
-//        maven {url 'http://developer.huawei.com/repo/'}
-//        //fcm
-//        maven { url "https://maven.google.com" }
-//    }
-//}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+        maven { url 'https://jitpack.io' }
+    }
+
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
