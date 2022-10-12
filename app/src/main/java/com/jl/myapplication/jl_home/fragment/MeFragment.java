@@ -1,4 +1,4 @@
-package com.jl.myapplication.home.fragment;
+package com.jl.myapplication.jl_home.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

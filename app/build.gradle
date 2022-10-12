@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     dataBinding {
         enabled = true
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.jl.myapplication"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -85,4 +85,12 @@ dependencies {
 
     //时间选择器
     implementation 'com.contrarywind:Android-PickerView:3.2.7'
+    //屏幕尺寸适配
+//    implementation 'com.zhy:autolayout:1.4.5'
+    // 下拉刷新
+//    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:2.0.5'
+//    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:2.0.5'//没有使用特殊Header，可以不加这行
+
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 }

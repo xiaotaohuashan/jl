@@ -14,15 +14,6 @@
         android:fitsSystemWindows="true"
         android:background="@drawable/guide_pages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-
-        <ImageView
-            android:id="@+id/iv"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="100dp"
-            android:layout_gravity="center"/>
-
-    </LinearLayout>
 </layout>

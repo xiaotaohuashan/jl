@@ -13,8 +13,6 @@ import com.jl.myapplication.databinding.ActivityWelcomeBinding;
 public class WelcomeActivity extends BaseActivity {
     private CountDownTimer mCountDownTimer;
 
-    private ActivityWelcomeBinding mBinding;
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_welcome;
@@ -33,6 +31,7 @@ public class WelcomeActivity extends BaseActivity {
             }
         };
         mCountDownTimer.start();
+
     }
 
     private Handler handler = new Handler() {
@@ -59,8 +58,9 @@ public class WelcomeActivity extends BaseActivity {
 
     //首次进入去引导页
     private void gotoGuide() {
-        mBinding = getBindView();
-
+        Intent it = new Intent(WelcomeActivity.this, GuideActivity.class);
+        startActivity(it);
+        finish();
     }
 
     //未登录去登录

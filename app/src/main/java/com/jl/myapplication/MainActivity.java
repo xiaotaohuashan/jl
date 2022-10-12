@@ -12,11 +12,11 @@ import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.ActivityManager;
 import com.jl.core.utils.FragmentUtils;
 import com.jl.myapplication.databinding.ActivityMainBinding;
-import com.jl.myapplication.home.fragment.MessageFragment;
-import com.jl.myapplication.home.fragment.MeFragment;
-import com.jl.myapplication.home.fragment.WaitFragment;
-import com.jl.myapplication.home.fragment.HomeFragment;
-import com.jl.myapplication.home.fragment.OrganizationFragment;
+import com.jl.myapplication.jl_home.fragment.MessageFragment;
+import com.jl.myapplication.jl_home.fragment.MeFragment;
+import com.jl.myapplication.jl_home.fragment.WaitFragment;
+import com.jl.myapplication.jl_home.fragment.HomeFragment;
+import com.jl.myapplication.jl_home.fragment.OrganizationFragment;
 
 
 public class MainActivity extends BaseActivity {
@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void createFragment() {
+        mHomeFragment = new HomeFragment();
         mMessageFragment = new MessageFragment();
         mOrganizationFragment = new OrganizationFragment();
         mMessageFragment = new MessageFragment();

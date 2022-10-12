@@ -1,13 +1,13 @@
-package com.jl.myapplication.home.fragment;
+package com.jl.myapplication.jl_home.fragment;
 
 import com.jl.core.base.fragment.BaseFragment;
 import com.jl.myapplication.R;
 
-//组织
-public class OrganizationFragment extends BaseFragment {
+// 待办
+public class WaitFragment extends BaseFragment {
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_organization;
+        return R.layout.fragment_wait;
     }
 
     @Override
