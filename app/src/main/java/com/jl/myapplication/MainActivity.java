@@ -12,7 +12,7 @@ import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.ActivityManager;
 import com.jl.core.utils.FragmentUtils;
 import com.jl.myapplication.databinding.ActivityMainBinding;
-import com.jl.myapplication.jl_home.fragment.MessageFragment;
+import com.jl.myapplication.jl_message.fragment.MessageFragment;
 import com.jl.myapplication.jl_home.fragment.MeFragment;
 import com.jl.myapplication.jl_home.fragment.WaitFragment;
 import com.jl.myapplication.jl_home.fragment.HomeFragment;

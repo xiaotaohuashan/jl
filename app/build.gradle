@@ -73,9 +73,10 @@ dependencies {
     // 图片框架glide
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
-
+    // 极光推送
     implementation 'cn.jiguang.sdk:jpush:4.8.1'  // 此处以JPush 4.8.1 版本为例。
     implementation 'cn.jiguang.sdk:jcore:3.3.5'  // 此处以JCore 3.3.5 版本为例。
+    implementation 'cn.jiguang.sdk:jmessage:2.9.2'  // 此处以JMessage 2.9.2 版本为例。
 
     // 动态权限集成库
     implementation 'com.yanzhenjie:permission:2.0.3'
@@ -93,4 +94,10 @@ dependencies {
 
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    //事件总线eventbus
+//    implementation("org.greenrobot:eventbus:3.3.1")
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
 }

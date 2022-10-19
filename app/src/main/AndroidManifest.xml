@@ -64,6 +64,8 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".login.GuideActivity"/>
         <activity android:name=".jl_me.activity.SettingActivity"/>
+        <activity android:name=".jl_message.activity.SearchForAddFriendActivity"/>
+
         <!--    友盟分享-微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
