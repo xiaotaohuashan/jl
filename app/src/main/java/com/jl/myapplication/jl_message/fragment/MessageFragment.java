@@ -3,12 +3,11 @@ package com.jl.myapplication.jl_message.fragment;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.utils.ToastUtils;
-import com.jl.core.view.XRecyclerViewTwo;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMessageBinding;
@@ -17,6 +16,9 @@ import com.jl.myapplication.jl_message.activity.ChatActivity;
 import com.jl.myapplication.jl_message.activity.SearchForAddFriendActivity;
 import com.jl.myapplication.jl_message.adapter.MessageAdapter;
 import com.jl.myapplication.jl_message.utils.SharePreferenceManager;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,47 +77,50 @@ public class MessageFragment extends BaseFragment {
 
     private void showMessage(){
         mBinding.mLoadLayout.setEmptyText("暂无查询结果");
-        mBinding.mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mHomeAdapter = new MessageAdapter(getActivity());
+        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mBinding.recyclerView.setAdapter(mHomeAdapter);
+
+//        mBinding.recyclerView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(), ChatActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                intent.putExtra(App.TARGET_ID, mList.get(v.).getTargetId());
+//                intent.putExtra(App.TARGET_APP_KEY, mList.get(position).getTargetAppKey());
+//                intent.setClass(getContext(), ChatActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mBinding.refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh() {
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 pageNum = 1;
                 setData();
-                mBinding.mSwipeRefreshLayout.setRefreshing(false);
+                refreshLayout.finishRefresh();
+                // 还有更多数据
+                refreshLayout.setNoMoreData(false);
             }
         });
-        mHomeAdapter = new MessageAdapter(getActivity());
-        mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBinding.mRecyclerView.setLoadingMoreEnabled(true);
-        mBinding.mRecyclerView.setLoadingListener(new XRecyclerViewTwo.LoadingListener() {
+
+        mBinding.refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onRefresh() {
-
-            }
-
-            @Override
-            public void onLoadMore() {
-
-                mBinding.mRecyclerView.setNoMore(false);
-            }
-        });
-        mBinding.mRecyclerView.setAdapter(mHomeAdapter);
-
-        mBinding.mRecyclerView.setOnItemClickListener(new XRecyclerViewTwo.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(getContext(), ChatActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(App.TARGET_ID, mList.get(position).getTargetId());
-                intent.putExtra(App.TARGET_APP_KEY, mList.get(position).getTargetAppKey());
-                intent.setClass(getContext(), ChatActivity.class);
-                startActivity(intent);
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                if (pageNum != 4){
+                    pageNum ++;
+                    refreshLayout.finishLoadMore();
+                }else {
+                    refreshLayout.finishLoadMore();
+                    refreshLayout.setNoMoreData(true);
+                }
             }
         });
     }
 
     private void setData(){
         mHomeAdapter.setList(mList);
-        mBinding.mRecyclerView.setLoadError();
         mBinding.mLoadLayout.showContent();
     }
 

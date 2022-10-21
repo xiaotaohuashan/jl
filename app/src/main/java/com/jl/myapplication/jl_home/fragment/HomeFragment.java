@@ -1,14 +1,12 @@
 package com.jl.myapplication.jl_home.fragment;
 
+import android.os.AsyncTask;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.log.LogUtils;
-import com.jl.core.utils.ToastUtils;
-import com.jl.core.view.XRecyclerViewTwo;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentHomeBinding;
 import com.jl.myapplication.jl_home.adapter.HomeAdapter;
@@ -40,36 +38,35 @@ public class HomeFragment extends BaseFragment {
 
     private void showMessage(){
         mBinding.mLoadLayout.setEmptyText("暂无查询结果");
-        mBinding.mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pageNum = 1;
-                setData();
-                mBinding.mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+//        mBinding.mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                pageNum = 1;
+//                setData();
+//            }
+//        });
         mHomeAdapter = new HomeAdapter(getActivity());
-        mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBinding.mRecyclerView.setLoadingMoreEnabled(true);
-        mBinding.mRecyclerView.setLoadingListener(new XRecyclerViewTwo.LoadingListener() {
-            @Override
-            public void onRefresh() {
-
-            }
-
-            @Override
-            public void onLoadMore() {
-                LogUtils.i("55555");
-                pageNum ++;
-                for (int i = 0;i < 15 ;i ++){
-                    int mun = pageNum * pageSize - 15 + i;
-                    mList.add("第" + mun + "条数据");
-                }
-                mHomeAdapter.setList(mList);
-                mBinding.mRecyclerView.setNoMore(false);
-            }
-        });
-        mBinding.mRecyclerView.setAdapter(mHomeAdapter);
+//        mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mBinding.mRecyclerView.setLoadingListener(new XRecyclerViewTwo.LoadingListener() {
+//            @Override
+//            public void onRefresh() {
+//
+//            }
+//
+//            @Override
+//            public void onLoadMore() {
+//                LogUtils.i("55555");
+//                pageNum ++;
+//                for (int i = 0;i < 15 ;i ++){
+//                    int mun = pageNum * pageSize - 15 + i;
+//                    mList.add("第" + mun + "条数据");
+//                }
+//                mHomeAdapter.setList(mList);
+//                mBinding.mRecyclerView.setNoMore(false);
+//            }
+//        });
+//        mBinding.mRecyclerView.setAdapter(mHomeAdapter);
+//        mBinding.mRecyclerView.setLoadingMoreEnabled(true);
         setData();
     }
 
@@ -80,9 +77,16 @@ public class HomeFragment extends BaseFragment {
             mList.add("第" + mun + "条数据");
         }
         mHomeAdapter.setList(mList);
-        mBinding.mRecyclerView.setLoadError();
+        LogUtils.i("11111");
         mBinding.mLoadLayout.showContent();
-        LogUtils.i("0124545");
 
+//        mBinding.mRecyclerView.setLoadError();
+//         mBinding.mRecyclerView.setRefreshComplete();
+//        mBinding.mRecyclerView.setNoMore(false);
+//        if (mBinding.mSwipeRefreshLayout.isRefreshing()) {
+//            mBinding.mSwipeRefreshLayout.setRefreshing(false);
+//        }
     }
+
+
 }

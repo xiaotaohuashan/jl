@@ -93,11 +93,14 @@ dependencies {
 //    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:2.0.5'//没有使用特殊Header，可以不加这行
 
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     //事件总线eventbus
 //    implementation("org.greenrobot:eventbus:3.3.1")
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    // 上拉刷新，下拉加载更多
+    implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    implementation  'io.github.scwang90:refresh-header-material:2.0.5'    //谷歌刷新头
+    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
 
 }

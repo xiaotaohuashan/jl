@@ -39,8 +39,8 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         mBinding = getBindView();
         createFragment();
-        mBinding.tabMe.setSelected(true);
-        switchFragment(mMeFragment);
+        mBinding.tabHome.setSelected(true);
+        switchFragment(mHomeFragment);
 
     }
 

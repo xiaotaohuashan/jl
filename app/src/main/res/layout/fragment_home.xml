@@ -44,17 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white">
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/mSwipeRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-                <com.jl.core.view.XRecyclerViewTwo
-                    android:id="@+id/mRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </com.jl.core.view.LoadLayout>
 
     </LinearLayout>

@@ -55,17 +55,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white">
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/mSwipeRefreshLayout"
+
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/refreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.jl.core.view.XRecyclerViewTwo
-                    android:id="@+id/mRecyclerView"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    android:background="#fff" />
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
         </com.jl.core.view.LoadLayout>
     </LinearLayout>
 </layout>
