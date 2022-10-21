@@ -19,8 +19,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
-
             android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tab_home"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/selector_tab_home"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_black"
+                    android:text="首页"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/tab_message"
@@ -69,28 +91,7 @@
             </LinearLayout>
 
 
-            <LinearLayout
-                android:id="@+id/tab_home"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_gravity="center">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/selector_tab_home"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="12sp"
-                    android:textColor="@color/text_black"
-                    android:text="首页"/>
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/tab_wait"

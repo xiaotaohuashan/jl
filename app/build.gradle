@@ -77,24 +77,15 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:4.8.1'  // 此处以JPush 4.8.1 版本为例。
     implementation 'cn.jiguang.sdk:jcore:3.3.5'  // 此处以JCore 3.3.5 版本为例。
     implementation 'cn.jiguang.sdk:jmessage:2.9.2'  // 此处以JMessage 2.9.2 版本为例。
-
     // 动态权限集成库
     implementation 'com.yanzhenjie:permission:2.0.3'
-
     // 微信图片选择器
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.8'
-
     //时间选择器
     implementation 'com.contrarywind:Android-PickerView:3.2.7'
     //屏幕尺寸适配
 //    implementation 'com.zhy:autolayout:1.4.5'
-    // 下拉刷新
-//    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:2.0.5'
-//    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:2.0.5'//没有使用特殊Header，可以不加这行
-
-
     //事件总线eventbus
-//    implementation("org.greenrobot:eventbus:3.3.1")
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
@@ -102,5 +93,6 @@ dependencies {
     implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
     implementation  'io.github.scwang90:refresh-header-material:2.0.5'    //谷歌刷新头
     implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
-
+    //轮播图
+    implementation 'io.github.youth5201314:banner:2.2.2'
 }

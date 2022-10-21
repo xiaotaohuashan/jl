@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.jl.myapplication">
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
@@ -12,31 +13,22 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <!--    配置bugly-->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 配置bugly -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--    极光推送-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 极光推送 -->
     <permission
         android:name="com.jl.myapplication.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.jl.myapplication.permission.JPUSH_MESSAGE" />
-
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-<!--    Android 11 使用相机，AndroidManifest.xm 添加代码：-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Android 11 使用相机，AndroidManifest.xm 添加代码： -->
     <queries package="com.jl.myapplication">
         <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE">
-
-            </action>
+            <action android:name="android.media.action.IMAGE_CAPTURE"></action>
         </intent>
         <intent>
-            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE">
-
-            </action>
+            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE"></action>
         </intent>
     </queries>
 
@@ -52,6 +44,13 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".ImageAdapter"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".login.WelcomeActivity"
             android:exported="true">
             <intent-filter>
@@ -62,11 +61,10 @@
         </activity>
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".login.GuideActivity"/>
-        <activity android:name=".jl_me.activity.SettingActivity"/>
-        <activity android:name=".jl_message.activity.SearchForAddFriendActivity"/>
-
-        <!--    友盟分享-微信-->
+        <activity android:name=".login.GuideActivity" />
+        <activity android:name=".jl_me.activity.SettingActivity" />
+        <activity android:name=".jl_message.activity.SearchForAddFriendActivity" />
+        <activity android:name=".jl_message.activity.ChatActivity" /> <!-- 友盟分享-微信 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -74,37 +72,38 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".wxapi.WXPayEntryActivity"
-            android:exported="true" />
-
-
-        <!-- Since JCore2.0.0 Required SDK核心功能-->
+            android:exported="true" /> <!-- Since JCore2.0.0 Required SDK核心功能 -->
         <!-- 可配置android:process参数将Service放在其他进程中；android:enabled属性不能是false -->
         <!-- 这个是自定义Service，要继承极光JCommonService，可以在更多手机平台上使得推送通道保持的更稳定 -->
-        <service android:name=".jiguang.MyJCommonService"
+        <service
+            android:name=".jiguang.MyJCommonService"
             android:enabled="true"
             android:exported="false"
             android:process=":pushcore">
             <intent-filter>
                 <action android:name="cn.jiguang.user.service.action" />
             </intent-filter>
-        </service>
-
-        <!-- Required since 3.0.7 -->
+        </service> <!-- Required since 3.0.7 -->
         <!-- 新的 tag/alias 接口结果返回需要开发者配置一个自定的广播 -->
         <!-- 3.3.0开始所有事件将通过该类回调 -->
         <!-- 该广播需要继承 JPush 提供的 JPushMessageReceiver 类, 并如下新增一个 Intent-Filter -->
         <receiver
             android:name=".jiguang.MyJPushMessageReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
+
                 <category android:name="com.jl.myapplication" />
             </intent-filter>
         </receiver>
 
-        <meta-data android:name="design_width" android:value="768"></meta-data>
-        <meta-data android:name="design_height" android:value="1280"></meta-data>
+        <meta-data
+            android:name="design_width"
+            android:value="768" />
+        <meta-data
+            android:name="design_height"
+            android:value="1280" />
     </application>
 
 </manifest>

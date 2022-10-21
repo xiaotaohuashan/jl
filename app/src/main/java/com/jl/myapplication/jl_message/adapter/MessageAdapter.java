@@ -63,11 +63,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.mBinding.tvTime.setText(DateUtils.timeStampToDay(mList.get(position).getLastMsgDate()));
         if (mList.get(position).getAvatarFile() != null){
             Glide.with(mContext).load(mList.get(position).getAvatarFile()).into(holder.mBinding.iv);
-        }else {
-
         }
-
-
+        if (listener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClickListener(position,mList);
+                }
+            });
+        }
     }
 
     @Override
@@ -89,7 +93,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private onItemClickListener listener;
 
     public interface onItemClickListener {
-        void onItemClickListener(int position, List<String> mList);
+        void onItemClickListener(int position, List<Conversation> mList);
     }
 
     public void setListener(onItemClickListener listener) {

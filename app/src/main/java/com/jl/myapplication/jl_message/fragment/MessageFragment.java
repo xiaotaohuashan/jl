@@ -71,25 +71,32 @@ public class MessageFragment extends BaseFragment {
         mBinding = getBindView();
         // 得到聊天列表
         mList = JMessageClient.getConversationList();
+        mHomeAdapter = new MessageAdapter(getActivity());
+        mHomeAdapter.setList(mList);
         showMessage();
         setData();
     }
 
     private void showMessage(){
         mBinding.mLoadLayout.setEmptyText("暂无查询结果");
-        mHomeAdapter = new MessageAdapter(getActivity());
+
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mBinding.recyclerView.setAdapter(mHomeAdapter);
-
+        mHomeAdapter.setListener(new MessageAdapter.onItemClickListener() {
+            @Override
+            public void onItemClickListener(int position, List<Conversation> mList) {
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra(App.TARGET_ID, mList.get(position).getTargetId());
+                intent.putExtra(App.TARGET_APP_KEY, mList.get(position).getTargetAppKey());
+                intent.setClass(getContext(), ChatActivity.class);
+                startActivity(intent);
+            }
+        });
 //        mBinding.recyclerView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(getContext(), ChatActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                intent.putExtra(App.TARGET_ID, mList.get(v.).getTargetId());
-//                intent.putExtra(App.TARGET_APP_KEY, mList.get(position).getTargetAppKey());
-//                intent.setClass(getContext(), ChatActivity.class);
-//                startActivity(intent);
+
 //            }
 //        });
 
@@ -120,7 +127,7 @@ public class MessageFragment extends BaseFragment {
     }
 
     private void setData(){
-        mHomeAdapter.setList(mList);
+
         mBinding.mLoadLayout.showContent();
     }
 
