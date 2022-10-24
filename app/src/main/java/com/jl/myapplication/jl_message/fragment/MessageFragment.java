@@ -32,7 +32,7 @@ import cn.jpush.im.api.BasicCallback;
 
 public class MessageFragment extends BaseFragment {
     private FragmentMessageBinding mBinding;
-    private MessageAdapter mHomeAdapter;
+    private MessageAdapter mAdapter;
     private int pageNum = 1;
     private int pageSize = 15;
     private List<Conversation> mList = new ArrayList<Conversation>();
@@ -71,8 +71,8 @@ public class MessageFragment extends BaseFragment {
         mBinding = getBindView();
         // 得到聊天列表
         mList = JMessageClient.getConversationList();
-        mHomeAdapter = new MessageAdapter(getActivity());
-        mHomeAdapter.setList(mList);
+        mAdapter = new MessageAdapter(getActivity());
+        mAdapter.setList(mList);
         showMessage();
         setData();
     }
@@ -81,8 +81,8 @@ public class MessageFragment extends BaseFragment {
         mBinding.mLoadLayout.setEmptyText("暂无查询结果");
 
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBinding.recyclerView.setAdapter(mHomeAdapter);
-        mHomeAdapter.setListener(new MessageAdapter.onItemClickListener() {
+        mBinding.recyclerView.setAdapter(mAdapter);
+        mAdapter.setListener(new MessageAdapter.onItemClickListener() {
             @Override
             public void onItemClickListener(int position, List<Conversation> mList) {
                 Intent intent = new Intent(getContext(), ChatActivity.class);

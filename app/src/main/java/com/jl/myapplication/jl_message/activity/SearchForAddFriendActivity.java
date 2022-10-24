@@ -42,33 +42,12 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
     private ImageView mIv_clear;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_for_add_friend);
-
-        initView();
-        initListener();
-    }
-
-    @Override
     protected int getLayoutId() {
-        return 0;
+        return R.layout.activity_search_for_add_friend;
     }
 
     @Override
-    protected void initData() {
-
-    }
-
-    private void initListener() {
-        mEt_searchUser.addTextChangedListener(new TextChange());
-        mBtn_search.setOnClickListener(this);
-        mSearch_result.setOnClickListener(this);
-        mSearch_addBtn.setOnClickListener(this);
-        mIv_clear.setOnClickListener(this);
-    }
-
-    private void initView() {
+    protected void initView() {
         mEt_searchUser = (EditText) findViewById(R.id.et_searchUser);
         mBtn_search = (Button) findViewById(R.id.btn_search);
         mSearch_result = (LinearLayout) findViewById(R.id.search_result);
@@ -77,6 +56,15 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
         mIv_clear = (ImageView) findViewById(R.id.iv_clear);
         mBtn_search.setEnabled(false);
         initTitle(true, true, "搜索用户", "", false, "");
+        initListener();
+    }
+
+    private void initListener() {
+        mEt_searchUser.addTextChangedListener(new TextChange());
+        mBtn_search.setOnClickListener(this);
+        mSearch_result.setOnClickListener(this);
+        mSearch_addBtn.setOnClickListener(this);
+        mIv_clear.setOnClickListener(this);
     }
 
     @Override

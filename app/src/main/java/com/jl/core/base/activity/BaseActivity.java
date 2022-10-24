@@ -42,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
 
         mContext = this;
         mActivity = this;
-        initData();
+        initView();
         setListener();
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
     /**
      * 初始化数据
      */
-    protected abstract void initData();
+    protected abstract void initView();
 
     /**
      * 初始化监听

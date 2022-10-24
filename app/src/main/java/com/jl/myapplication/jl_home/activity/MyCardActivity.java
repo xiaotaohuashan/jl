@@ -21,7 +21,7 @@ import java.util.List;
 //我的卡卷（用户红包列表）
 public class MyCardActivity extends BaseActivity {
     private ActivityMyCardBinding mBinding;
-    private HomeAdapter mHomeAdapter;
+    private HomeAdapter mAdapter;
     private int pageNum = 1;
     private int pageSize = 15;
     private List<String> mList;
@@ -32,7 +32,7 @@ public class MyCardActivity extends BaseActivity {
     }
 
     @Override
-    protected void initData() {
+    protected void initView() {
         mBinding = getBindView();
         setTitle("我的卡卷");
 //        mBinding.mLoadLayout.setEmptyIcon(R.mipmap.b);
@@ -58,7 +58,7 @@ public class MyCardActivity extends BaseActivity {
                         int mun = pageNum * pageSize - 15 + i;
                         mList.add("第" + mun + "条数据");
                     }
-                    mHomeAdapter.setList(mList);
+                    mAdapter.setList(mList);
                     refreshLayout.finishLoadMore();
                 }else {
                     refreshLayout.finishLoadMore();
@@ -66,8 +66,8 @@ public class MyCardActivity extends BaseActivity {
                 }
             }
         });
-        mHomeAdapter = new HomeAdapter(this);
-        mBinding.recyclerView.setAdapter(mHomeAdapter);
+        mAdapter = new HomeAdapter(this);
+        mBinding.recyclerView.setAdapter(mAdapter);
         setData();
 //        mBinding.mLoadLayout.showContent();
 //        mBinding.mLoadLayout.showEmpty();
@@ -81,15 +81,8 @@ public class MyCardActivity extends BaseActivity {
             mList.add("第" + mun + "条数据");
         }
 
-        mHomeAdapter.setList(mList);
+        mAdapter.setList(mList);
         LogUtils.i("22222");
-//        mBinding.mLoadLayout.showContent();
-//
-////        mBinding.mRecyclerView.setLoadError();
-//        mBinding.mRecyclerView.setRefreshComplete();
-//        mBinding.mRecyclerView.setNoMore(false);
-//        if (mBinding.mSwipeRefreshLayout.isRefreshing()) {
-//            mBinding.mSwipeRefreshLayout.setRefreshing(false);
-//        }
+
     }
 }

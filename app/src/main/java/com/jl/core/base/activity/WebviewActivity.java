@@ -28,7 +28,7 @@ public class WebviewActivity extends BaseActivity {
     }
 
     @Override
-    protected void initData() {
+    protected void initView() {
         binding = getBindView();
         mTitle = getIntent().getStringExtra("title");
         mLlMain = (RelativeLayout) findViewById(R.id.rl_main);

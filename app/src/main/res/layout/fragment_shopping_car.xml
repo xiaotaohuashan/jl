@@ -7,7 +7,129 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/line_gray"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_all_number"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="共0套商品"
+                android:textColor="@color/text1"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_manage"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="管理"
+                android:textColor="@color/teal_700"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <com.jl.core.view.LoadLayout
+            android:id="@+id/mLoadLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white">
+
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/refreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    android:background="#fff" />
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        </com.jl.core.view.LoadLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/line_gray"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_all_select"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center_vertical"
+                android:background="@mipmap/confirm_empty"/>
+
+            <TextView
+                android:id="@+id/tv_all_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:text="全选"
+                android:textColor="@color/text1"
+                android:textSize="12sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="合计："
+                android:textColor="@color/text1"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="￥0。00"
+                android:textColor="@color/red"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_account"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:background="@color/teal_700"
+                android:gravity="center"
+                android:text="结算"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

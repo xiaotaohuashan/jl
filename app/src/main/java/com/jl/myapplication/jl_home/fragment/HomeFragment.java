@@ -24,7 +24,7 @@ import java.util.List;
 
 public class HomeFragment extends BaseFragment {
     private FragmentHomeBinding mBinding;
-    private HomeAdapter mHomeAdapter;
+    private HomeAdapter mAdapter;
     private int pageNum = 1;
     private int pageSize = 15;
     private List<String> mList;
@@ -54,7 +54,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void showMessage(){
-        mHomeAdapter = new HomeAdapter(getActivity());
+        mAdapter = new HomeAdapter(getActivity());
         //自定义的图片适配器，也可以使用默认的BannerImageAdapter
         ImageAdapter adapter = new ImageAdapter(DataBean.getTestData3(),getContext());
         mBinding.viewBanner.setAdapter(adapter)
@@ -74,10 +74,6 @@ public class HomeFragment extends BaseFragment {
             int mun = pageNum * pageSize - 15 + i;
             mList.add("第" + mun + "条数据");
         }
-        mHomeAdapter.setList(mList);
-        LogUtils.i("11111");
-
+        mAdapter.setList(mList);
     }
-
-
 }

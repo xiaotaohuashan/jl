@@ -37,7 +37,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected void initData() {
+    protected void initView() {
         mBinding = getBindView();
         if (!StringUtil.isEmpty(SettingsUtil.getTrueName()) && !StringUtil.isEmpty(SettingsUtil.getPassword()) && !StringUtil.isEmpty(SettingsUtil.getUserType())) {
             loginPw(mActivity, SettingsUtil.getTrueName(), SettingsUtil.getPassword(), SettingsUtil.getUserType());

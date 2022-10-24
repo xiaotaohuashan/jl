@@ -20,7 +20,7 @@ import java.util.List;
 //组织
 public class OrganizationFragment extends BaseFragment {
     private FragmentOrganizationBinding mBinding;
-    private HomeAdapter mHomeAdapter;
+    private HomeAdapter mAdapter;
     private int pageNum = 1;
     private int pageSize = 15;
     private List<String> mList;
@@ -60,7 +60,7 @@ public class OrganizationFragment extends BaseFragment {
                         int mun = pageNum * pageSize - 15 + i;
                         mList.add("第" + mun + "条数据");
                     }
-                    mHomeAdapter.setList(mList);
+                    mAdapter.setList(mList);
                     refreshLayout.finishLoadMore();
                 }else {
                     refreshLayout.finishLoadMore();
@@ -68,8 +68,8 @@ public class OrganizationFragment extends BaseFragment {
                 }
             }
         });
-        mHomeAdapter = new HomeAdapter(getActivity());
-        mBinding.recyclerView.setAdapter(mHomeAdapter);
+        mAdapter = new HomeAdapter(getActivity());
+        mBinding.recyclerView.setAdapter(mAdapter);
         setData();
     }
 
@@ -79,17 +79,7 @@ public class OrganizationFragment extends BaseFragment {
             int mun = pageNum * pageSize - 15 + i;
             mList.add("第" + mun + "条数据");
         }
-
-        mHomeAdapter.setList(mList);
-        LogUtils.i("22222");
-//        mBinding.mLoadLayout.showContent();
-//
-////        mBinding.mRecyclerView.setLoadError();
-//        mBinding.mRecyclerView.setRefreshComplete();
-//        mBinding.mRecyclerView.setNoMore(false);
-//        if (mBinding.mSwipeRefreshLayout.isRefreshing()) {
-//            mBinding.mSwipeRefreshLayout.setRefreshing(false);
-//        }
+        mAdapter.setList(mList);
     }
 
 }

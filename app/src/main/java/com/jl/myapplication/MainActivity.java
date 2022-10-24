@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void initData() {
+    protected void initView() {
         mBinding = getBindView();
         createFragment();
         mBinding.tabHome.setSelected(true);

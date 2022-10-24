@@ -17,7 +17,7 @@ public class AboutUseActivity extends BaseActivity {
     }
 
     @Override
-    protected void initData() {
+    protected void initView() {
         mBinding = getBindView();
     }
 
