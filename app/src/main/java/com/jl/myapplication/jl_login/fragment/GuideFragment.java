@@ -1,4 +1,4 @@
-package com.jl.myapplication.login.fragment;
+package com.jl.myapplication.jl_login.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.utils.SettingsUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentGuideBinding;
-import com.jl.myapplication.login.LoginActivity;
+import com.jl.myapplication.jl_login.LoginActivity;
 
 public class GuideFragment extends BaseFragment {
     private FragmentGuideBinding mBinding;

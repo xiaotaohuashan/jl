@@ -5,7 +5,7 @@
 
         <variable
             name="presenter"
-            type="com.jl.myapplication.login.WelcomeActivity" />
+            type="com.jl.myapplication.jl_login.WelcomeActivity" />
 
     </data>
 

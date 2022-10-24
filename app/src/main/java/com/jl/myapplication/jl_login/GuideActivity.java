@@ -1,4 +1,4 @@
-package com.jl.myapplication.login;
+package com.jl.myapplication.jl_login;
 
 import android.content.Intent;
 
@@ -9,8 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.myapplication.R;
-import com.jl.myapplication.login.adapter.GuideViewpagerAdapter;
-import com.jl.myapplication.model.Guide;
+import com.jl.myapplication.jl_login.adapter.GuideViewpagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

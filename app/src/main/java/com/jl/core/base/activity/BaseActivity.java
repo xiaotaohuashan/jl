@@ -21,7 +21,7 @@ import com.jl.core.log.LogUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 
-public abstract class BaseActivity extends AppCompatActivity implements IBaseView {
+public abstract class BaseActivity extends AppCompatActivity implements IBaseView,View.OnClickListener{
     private TextView mJmui_title_tv;
     private ImageButton mReturn_btn;
     private TextView mJmui_title_left;
@@ -171,5 +171,16 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
             mJmui_commit_btn.setText(desc);
         }
 
+    }
+
+    public void setTitle(String title) {
+        ((TextView) findViewById(R.id.tvTitle)).setText(title);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.ib_back) {
+            finish();
+        }
     }
 }

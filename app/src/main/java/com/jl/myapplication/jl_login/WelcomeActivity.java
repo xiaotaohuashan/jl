@@ -1,4 +1,4 @@
-package com.jl.myapplication.login;
+package com.jl.myapplication.jl_login;
 
 import android.content.Intent;
 import android.os.CountDownTimer;
@@ -8,7 +8,6 @@ import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.SettingsUtil;
 
 import com.jl.myapplication.R;
-import com.jl.myapplication.databinding.ActivityWelcomeBinding;
 
 public class WelcomeActivity extends BaseActivity {
     private CountDownTimer mCountDownTimer;

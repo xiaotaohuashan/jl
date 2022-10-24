@@ -1,5 +1,6 @@
 package com.jl.myapplication.jl_home.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 
@@ -12,11 +13,10 @@ import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.log.LogUtils;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentHomeBinding;
+import com.jl.myapplication.jl_home.activity.GoodsActivity;
 import com.jl.myapplication.jl_home.adapter.HomeAdapter;
 import com.jl.myapplication.jl_home.adapter.ImageAdapter;
 import com.jl.myapplication.model.DataBean;
-import com.youth.banner.adapter.BannerImageAdapter;
-import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
 import java.util.ArrayList;
@@ -36,7 +36,12 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public void setListener() {
-
+        mBinding.tvPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), GoodsActivity.class));
+            }
+        });
     }
 
     @Override
@@ -53,35 +58,13 @@ public class HomeFragment extends BaseFragment {
         //自定义的图片适配器，也可以使用默认的BannerImageAdapter
         ImageAdapter adapter = new ImageAdapter(DataBean.getTestData3(),getContext());
         mBinding.viewBanner.setAdapter(adapter)
-//              .setCurrentItem(0,false)
                 .addBannerLifecycleObserver(this)//添加生命周期观察者
                 .setIndicator(new CircleIndicator(getContext()))//设置指示器
                 .setOnBannerListener((data, position) -> {
                     //点击事件
                     LogUtils.i("66666" + position);
                 });
-//        mBinding.viewBanner.setAdapter(new BannerImageAdapter<DataBean>(DataBean.getTestData3()) {
-//                    @Override
-//                    public void onBindView(BannerImageHolder holder, DataBean data, int position, int size) {
-//                        //图片加载自己实现
-//                        Glide.with(holder.itemView)
-//                                .load(data.imageUrl)
-//                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(30)))
-//                                .into(holder.imageView);
-//                    }
-//                })
-//                .addBannerLifecycleObserver(this)//添加生命周期观察者
-//                .setIndicator(new CircleIndicator(this));
-//        mBinding.viewBanner.setAdapter(new BannerImageAdapter(mNewImages) {
-//            @Override
-//            public void onBindView(Object holder, Object data, int position, int size) {
-//                        //图片加载自己实现
-//                        Glide.with(holder.itemView)
-//                                .load(data.imageUrl)
-//                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(30)))
-//                                .into(holder.imageView);
-//            }
-//        });
+
         setData();
     }
 

@@ -12,8 +12,9 @@ import com.jl.core.utils.DataCleanManager;
 import com.jl.core.view.dialog.TwoButtonMsgDialogUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMeBinding;
+import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_me.activity.SettingActivity;
-import com.jl.myapplication.login.LoginActivity;
+import com.jl.myapplication.jl_login.LoginActivity;
 
 public class MeFragment extends BaseFragment {
     private FragmentMeBinding mBinding;
@@ -50,6 +51,13 @@ public class MeFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 showCleanDialog();
+            }
+        });
+        mBinding.tvAboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AboutUseActivity.class);
+                startActivity(intent);
             }
         });
     }

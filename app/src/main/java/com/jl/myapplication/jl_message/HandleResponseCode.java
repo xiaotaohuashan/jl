@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jl.myapplication.login.LoginActivity;
+import com.jl.myapplication.jl_login.LoginActivity;
 
 
 public class HandleResponseCode {

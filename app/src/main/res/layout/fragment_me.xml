@@ -389,12 +389,13 @@
                         android:src="@drawable/i_product_no"/>
 
                     <TextView
+                        android:id="@+id/tv_about_us"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="65dp"
                         android:textSize="15sp"
-                        android:text="关于通达"/>
+                        android:text="关于我们"/>
 
                     <ImageView
                         android:layout_width="25dp"

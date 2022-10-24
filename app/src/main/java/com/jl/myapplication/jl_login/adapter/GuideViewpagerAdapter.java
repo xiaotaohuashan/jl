@@ -1,4 +1,4 @@
-package com.jl.myapplication.login.adapter;
+package com.jl.myapplication.jl_login.adapter;
 
 import android.os.Bundle;
 
@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.jl.myapplication.login.fragment.GuideFragment;
+import com.jl.myapplication.jl_login.fragment.GuideFragment;
 
 import java.util.List;
 

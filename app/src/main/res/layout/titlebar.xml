@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="44dp"
+    android:id="@+id/rl_main"
+    android:background="@color/blue">
+
+    <ImageButton
+        android:id="@+id/ib_back"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="onClick"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/back_icon_transprent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnRight"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:minWidth="1dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:textColor="@color/text1"
+        android:textSize="15dp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/ibRight1"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/icon_bind_back"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/ibRight2"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/ibRight1"
+        android:src="@mipmap/icon_bind_back"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone" />
+</RelativeLayout>

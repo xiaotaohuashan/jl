@@ -1,4 +1,4 @@
-package com.jl.myapplication.login;
+package com.jl.myapplication.jl_login;
 
 import static com.jl.myapplication.App.getContext;
 
@@ -9,9 +9,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.log.LogUtils;
 import com.jl.core.network.httpInterface.DefaultObserver;
