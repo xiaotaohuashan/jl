@@ -12,6 +12,7 @@ import com.jl.core.utils.DataCleanManager;
 import com.jl.core.view.dialog.TwoButtonMsgDialogUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMeBinding;
+import com.jl.myapplication.jl_home.activity.MyCardActivity;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_me.activity.SettingActivity;
 import com.jl.myapplication.jl_login.LoginActivity;
@@ -57,6 +58,13 @@ public class MeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AboutUseActivity.class);
+                startActivity(intent);
+            }
+        });
+        mBinding.rlMyCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), MyCardActivity.class);
                 startActivity(intent);
             }
         });

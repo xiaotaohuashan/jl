@@ -14,7 +14,7 @@ import com.jl.core.utils.FragmentUtils;
 import com.jl.myapplication.databinding.ActivityMainBinding;
 import com.jl.myapplication.jl_message.fragment.MessageFragment;
 import com.jl.myapplication.jl_home.fragment.MeFragment;
-import com.jl.myapplication.jl_home.fragment.WaitFragment;
+import com.jl.myapplication.jl_home.fragment.ShoppingCarFragment;
 import com.jl.myapplication.jl_home.fragment.HomeFragment;
 import com.jl.myapplication.jl_home.fragment.OrganizationFragment;
 
@@ -25,7 +25,7 @@ public class MainActivity extends BaseActivity {
     private HomeFragment mHomeFragment;
     private OrganizationFragment mOrganizationFragment;
     private MessageFragment mMessageFragment;
-    private WaitFragment mWaitFragment;
+    private ShoppingCarFragment mWaitFragment;
     private MeFragment mMeFragment;
     private Fragment mCurFragment;
     private long mkeyTime;
@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
         mMessageFragment = new MessageFragment();
         mOrganizationFragment = new OrganizationFragment();
         mMessageFragment = new MessageFragment();
-        mWaitFragment = new WaitFragment();
+        mWaitFragment = new ShoppingCarFragment();
         mMeFragment = new MeFragment();
     }
 

@@ -343,6 +343,7 @@
                     android:layout_marginRight="15dp"/>
 
                 <RelativeLayout
+                    android:id="@+id/rl_my_card"
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
 
@@ -359,7 +360,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="65dp"
                         android:textSize="15sp"
-                        android:text="通用"/>
+                        android:text="我的红包"/>
 
                     <ImageView
                         android:layout_width="25dp"
