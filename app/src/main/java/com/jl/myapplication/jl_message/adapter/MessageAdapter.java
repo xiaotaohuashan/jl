@@ -58,7 +58,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mBinding.tvName.setText(mList.get(position).getTitle());
-
         holder.mBinding.tvMessage.setText(mList.get(position).getLatestText());
         holder.mBinding.tvTime.setText(DateUtils.timeStampToDay(mList.get(position).getLastMsgDate()));
         if (mList.get(position).getAvatarFile() != null){

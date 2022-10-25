@@ -8,6 +8,7 @@ import android.os.StrictMode;
 import com.jl.core.gateway.Gateway;
 import com.jl.core.network.AppService;
 import com.jl.core.social.SocialCenter;
+import com.jl.core.utils.ToastUtils;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -71,6 +72,8 @@ public class App extends Application {
         super.onCreate();
         mApp = this;
         mContext = getApplicationContext();
+        //toast初始化
+        ToastUtils.init(mContext);
         THUMP_PICTURE_DIR = mContext.getFilesDir().getAbsolutePath() + "/JChatDemo";
         //bugly
         CrashReport.initCrashReport(getApplicationContext(), "a240c7e802", false);

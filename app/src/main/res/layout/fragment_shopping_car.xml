@@ -13,7 +13,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/line_gray"/>
+            android:background="@color/line_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,10 +23,10 @@
             <TextView
                 android:id="@+id/tv_all_number"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
+                android:layout_weight="1"
                 android:text="共0套商品"
                 android:textColor="@color/text1"
                 android:textSize="15sp" />
@@ -43,32 +43,27 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
-        <com.jl.core.view.LoadLayout
-            android:id="@+id/mLoadLayout"
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/white">
+            android:layout_weight="1">
 
-            <com.scwang.smart.refresh.layout.SmartRefreshLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/refreshLayout"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:overScrollMode="never" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:overScrollMode="never"
-                    android:background="#fff" />
-            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-        </com.jl.core.view.LoadLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/line_gray"/>
+            android:background="@color/line_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,9 +74,9 @@
                 android:id="@+id/iv_all_select"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginLeft="10dp"
                 android:layout_gravity="center_vertical"
-                android:background="@mipmap/confirm_empty"/>
+                android:layout_marginLeft="10dp"
+                android:background="@mipmap/confirm_empty" />
 
             <TextView
                 android:id="@+id/tv_all_select"
@@ -95,8 +90,8 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -115,7 +110,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
-                android:text="￥0。00"
+                android:text="￥0"
                 android:textColor="@color/red"
                 android:textSize="12sp" />
 
