@@ -47,4 +47,14 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
+
+    <!--网络加载动画-->
+<!--    <style name="picture_default_style">-->
+<!--&lt;!&ndash;        <item name="android:indeterminateDrawable">@drawable/progress_network</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="android:minWidth">25dp</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="android:minHeight">25dp</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="android:maxWidth">60dp</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="android:maxHeight">60dp</item>&ndash;&gt;-->
+<!--        <item name="colorAccent">@color/white</item>-->
+<!--    </style>-->
 </resources>

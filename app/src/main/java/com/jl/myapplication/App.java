@@ -1,11 +1,9 @@
 package com.jl.myapplication;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
-import com.jl.core.gateway.Gateway;
 import com.jl.core.network.AppService;
 import com.jl.core.social.SocialCenter;
 import com.jl.core.utils.ToastUtils;

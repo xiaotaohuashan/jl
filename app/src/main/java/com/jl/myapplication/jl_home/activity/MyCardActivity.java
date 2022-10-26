@@ -16,9 +16,8 @@ import java.util.List;
 
 
 /**
- * Created by Lenovo on 2018/1/17.
+ * 我的卡卷（用户红包列表）
  */
-//我的卡卷（用户红包列表）
 public class MyCardActivity extends BaseActivity {
     private ActivityMyCardBinding mBinding;
     private HomeAdapter mAdapter;

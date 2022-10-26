@@ -14,6 +14,7 @@ import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMeBinding;
 import com.jl.myapplication.jl_home.activity.MyCardActivity;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
+import com.jl.myapplication.jl_me.activity.PublishActivity;
 import com.jl.myapplication.jl_me.activity.SettingActivity;
 import com.jl.myapplication.jl_login.LoginActivity;
 
@@ -65,6 +66,13 @@ public class MeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), MyCardActivity.class);
+                startActivity(intent);
+            }
+        });
+        mBinding.rlPublish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PublishActivity.class);
                 startActivity(intent);
             }
         });

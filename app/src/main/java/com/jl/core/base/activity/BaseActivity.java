@@ -174,7 +174,12 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
     }
 
     public void setTitle(String title) {
-        ((TextView) findViewById(R.id.tvTitle)).setText(title);
+        try {
+            // 可能tvTitle为空
+            ((TextView) findViewById(R.id.tvTitle)).setText(title);
+        }catch (Exception e){
+            LogUtils.e(e.getMessage());
+        }
     }
 
     @Override

@@ -63,6 +63,7 @@
         <activity android:name=".jl_me.activity.AboutUseActivity"/>
         <activity android:name="com.jl.core.base.activity.WebviewActivity"/>
         <activity android:name=".jl_home.activity.MyCardActivity"/>
+        <activity android:name=".jl_me.activity.PublishActivity"/>
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

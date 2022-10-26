@@ -308,6 +308,7 @@
                     android:layout_marginRight="15dp"/>
 
                 <RelativeLayout
+                    android:id="@+id/rl_publish"
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
 
@@ -324,7 +325,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="65dp"
                         android:textSize="15sp"
-                        android:text="安全设置"/>
+                        android:text="发布管理"/>
 
                     <ImageView
                         android:layout_width="25dp"
