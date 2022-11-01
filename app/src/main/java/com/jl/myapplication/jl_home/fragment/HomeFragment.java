@@ -1,19 +1,12 @@
 package com.jl.myapplication.jl_home.fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.view.View;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.log.LogUtils;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentHomeBinding;
-import com.jl.myapplication.jl_home.activity.GoodsActivity;
 import com.jl.myapplication.jl_home.adapter.HomeAdapter;
 import com.jl.myapplication.jl_home.adapter.ImageAdapter;
 import com.jl.myapplication.model.DataBean;
@@ -39,7 +32,7 @@ public class HomeFragment extends BaseFragment {
         mBinding.tvPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), GoodsActivity.class));
+//                startActivity(new Intent(getContext(), GoodsActivity.class));
             }
         });
     }

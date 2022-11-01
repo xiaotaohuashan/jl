@@ -1,7 +1,6 @@
 package com.jl.myapplication.jl_me.activity;
 
 
-import android.Manifest;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.jl.core.base.activity.BaseActivity;
@@ -17,17 +15,15 @@ import com.jl.core.log.LogUtils;
 import com.jl.core.utils.DpUtil;
 import com.jl.core.utils.ListUtil;
 import com.jl.core.utils.PicSelectUtil;
-import com.jl.core.utils.StringUtil;
 import com.jl.myapplication.R;
-import com.jl.myapplication.databinding.ActivityMyCardBinding;
+
 import com.jl.myapplication.databinding.ActivityPublishBinding;
 import com.jl.myapplication.databinding.ImageviewPhotoBinding;
-import com.jl.myapplication.jl_home.adapter.ImageAdapter;
-import com.jl.myapplication.jl_me.adapter.PublishImageAdapter;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
