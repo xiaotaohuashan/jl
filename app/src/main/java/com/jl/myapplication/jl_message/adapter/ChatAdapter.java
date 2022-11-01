@@ -16,9 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.timepicker.TimeFormat;
+import com.jl.core.log.LogUtils;
 import com.jl.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -79,13 +81,19 @@ public class ChatAdapter extends BaseAdapter {
     private boolean mHasLastPage = false;
 
     public ChatAdapter(Activity context, Conversation conv) {
-        this.mContext = context;
+        mContext = context;
         mActivity = context;
-        this.mConv = conv;
+        mConv = conv;
+        mInflater = LayoutInflater.from(mContext);
+        // 获得消息列表
+        this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);
+        // 颠倒消息列表
+        reverse(mMsgList);
     }
 
     @Override
     public int getCount() {
+        LogUtils.i("聊天" + mMsgList.size());
         return mMsgList.size();
     }
 
@@ -96,7 +104,7 @@ public class ChatAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -210,6 +218,8 @@ public class ChatAdapter extends BaseAdapter {
                 } else {
                     holder.ll_businessCard.setVisibility(View.GONE);
                     holder.txtContent.setVisibility(View.VISIBLE);
+                    final String content = ((TextContent) msg.getContent()).getText();
+                    holder.txtContent.setText(content);
 //                    mController.handleTextMsg(msg, holder, position);
                 }
                 break;
@@ -373,5 +383,17 @@ public class ChatAdapter extends BaseAdapter {
         public TextView tv_userName;
         public TextView text_receipt;
         public TextView fileLoad;
+    }
+
+    public void addMsgToList(Message msg) {
+        mMsgList.add(msg);
+        notifyDataSetChanged();
+    }
+
+    // 颠倒消息列表
+    private void reverse(List<Message> list) {
+        if (list.size() > 0) {
+            Collections.reverse(list);
+        }
     }
 }

@@ -69,7 +69,7 @@ public class MessageFragment extends BaseFragment {
     @Override
     public void initView() {
         mBinding = getBindView();
-        // 得到聊天列表
+        // 获取会话列表
         mList = JMessageClient.getConversationList();
         mAdapter = new MessageAdapter(getActivity());
         mAdapter.setList(mList);
@@ -131,8 +131,9 @@ public class MessageFragment extends BaseFragment {
         mBinding.mLoadLayout.showContent();
     }
 
-    // 注册
+    // 极光IM注册
     private void register(String userId,String password){
+        // 极光IM注册
         JMessageClient.register(userId, password, new BasicCallback() {
             @Override
             public void gotResult(int i, String s) {
@@ -147,8 +148,9 @@ public class MessageFragment extends BaseFragment {
         });
     }
 
-    // 登陆
+    // 极光IM登陆
     private void login(String userId,String password){
+        // 极光IM登录
         JMessageClient.login(userId, password, new BasicCallback() {
             @Override
             public void gotResult(int responseCode, String responseMessage) {

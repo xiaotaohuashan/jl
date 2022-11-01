@@ -75,6 +75,7 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
                 hintKbTwo();
                 String searchUserName = mEt_searchUser.getText().toString();
                 if (!TextUtils.isEmpty(searchUserName)) {
+                    // 极光IM获取用户信息
                     JMessageClient.getUserInfo(searchUserName, new GetUserInfoCallback() {
                         @Override
                         public void gotResult(int responseCode, String responseMessage, UserInfo info) {
