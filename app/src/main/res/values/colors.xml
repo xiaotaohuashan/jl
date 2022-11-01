@@ -17,4 +17,14 @@
     <color name="secondaryColor">#FFFFFF</color>
     <!--页面title对应的颜色-->
     <color name="text1">#333333</color>
+    <color name="send_file_title_color">#545454</color>
+    <color name="chat_item_file_size">#989898</color>
+    <color name="send_file_divider_color">#dcdcdc</color>
+    <color name="blue_btn_cannot_pressed">#6CDEDD</color>
+    <color name="blue_btn_normal">#2DD0CF</color>
+    <color name="blue_btn_pressed">#02BDBC</color>
+    <color name="toolbar_btn_select">#D9D9D9</color>
+    <color name="toolbar_btn_nomal">@color/white</color>
+    <color name="menu_item_back_pres_color">#2DD0CF</color>
+    <color name="item_click_bg_color">#E9EDED</color>
 </resources>

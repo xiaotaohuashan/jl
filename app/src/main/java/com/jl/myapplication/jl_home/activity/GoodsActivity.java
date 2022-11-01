@@ -4,16 +4,11 @@ package com.jl.myapplication.jl_home.activity;
 import android.content.Intent;
 
 import com.jl.core.base.activity.BaseActivity;
-import com.jl.core.log.LogUtils;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityGoodsBinding;
-import com.jl.myapplication.jl_home.adapter.HomeAdapter;
 import com.jl.myapplication.jl_home.adapter.ImageAdapter;
 import com.jl.myapplication.model.DataBean;
 import com.youth.banner.indicator.CircleIndicator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -41,9 +36,6 @@ public class GoodsActivity extends BaseActivity {
                 .addBannerLifecycleObserver(this)//添加生命周期观察者
                 .setIndicator(new CircleIndicator(this))//设置指示器
                 .setOnBannerListener((data, position) -> {
-                    //点击事件
-                    LogUtils.i("66666" + position);
-
                     String[] images = new String[DataBean.getTestData3().size()];
                     for (int i = 0; i < DataBean.getTestData3().size(); i++) {
                         images[i] = DataBean.getTestData3().get(i).imageUrl;

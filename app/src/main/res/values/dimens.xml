@@ -510,4 +510,6 @@
     <dimen name="three_grid_unit">24dp</dimen>
     <dimen name="one_and_a_half_grid_unit">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="item_head_icon_size">40dp</dimen>
+    <dimen name="chat_head_icon_size">40dp</dimen>
 </resources>
