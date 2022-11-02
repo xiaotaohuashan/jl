@@ -7,21 +7,37 @@ import static android.view.View.VISIBLE;
 import static com.jl.myapplication.App.TARGET_APP_KEY;
 import static com.jl.myapplication.App.TARGET_ID;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Toast;
 
 import com.jl.core.base.activity.BaseActivity;
+import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityChatBinding;
+import com.jl.myapplication.jl_me.activity.AboutUseActivity;
+import com.jl.myapplication.jl_message.TipItem;
+import com.jl.myapplication.jl_message.TipView;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.enums.ContentType;
+import cn.jpush.im.android.api.enums.MessageDirect;
+import cn.jpush.im.android.api.event.CommandNotificationEvent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.Message;
+import cn.jpush.im.api.BasicCallback;
 
 // 聊天页面
 public class ChatActivity extends BaseActivity {
@@ -49,7 +65,7 @@ public class ChatActivity extends BaseActivity {
         if (mConv == null) {
             mConv = Conversation.createSingleConversation(mTargetId, mTargetAppKey);
         }
-        mAdapter = new ChatAdapter(this,mConv);
+        mAdapter = new ChatAdapter(this,mConv,longClickListener);
         mBinding.listview.setAdapter(mAdapter);
     }
 
@@ -120,4 +136,239 @@ public class ChatActivity extends BaseActivity {
 //            }
 //        });
     }
+
+    public void onEvent(CommandNotificationEvent event) {
+        if (event.getType().equals(CommandNotificationEvent.Type.single)) {
+            String msg = event.getMsg();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject object = new JSONObject(msg);
+                        JSONObject jsonContent = object.getJSONObject("content");
+                        String messageString = jsonContent.getString("message");
+                        if (TextUtils.isEmpty(messageString)) {
+                            setTitle(mConv.getTitle());
+                        } else {
+                            setTitle(messageString);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    private ChatAdapter.ContentLongClickListener longClickListener = new ChatAdapter.ContentLongClickListener() {
+
+        @Override
+        public void onContentLongClick(final int position, View view) {
+
+            final Message msg = mAdapter.getMessage(position);
+
+            if (msg == null) {
+                return;
+            }
+            //如果是文本消息
+            if ((msg.getContentType() == ContentType.text) && ((TextContent) msg.getContent()).getStringExtra("businessCard") == null) {
+                //接收方
+                if (msg.getDirect() == MessageDirect.receive) {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    float OldListY = (float) location[1];
+                    float OldListX = (float) location[0];
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                            .addItem(new TipItem("复制"))
+                            .addItem(new TipItem("转发"))
+                            .addItem(new TipItem("删除"))
+                            .setOnItemClickListener(new TipView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(String str, final int position) {
+                                    if (position == 0) {
+                                        if (msg.getContentType() == ContentType.text) {
+                                            final String content = ((TextContent) msg.getContent()).getText();
+                                            if (Build.VERSION.SDK_INT > 11) {
+                                                ClipboardManager clipboard = (ClipboardManager) mContext
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                                                ClipData clip = ClipData.newPlainText("Simple text", content);
+                                                clipboard.setPrimaryClip(clip);
+                                            } else {
+                                                android.text.ClipboardManager clip = (android.text.ClipboardManager) mContext
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                                                if (clip.hasText()) {
+                                                    clip.getText();
+                                                }
+                                            }
+                                            Toast.makeText(ChatActivity.this, "已复制", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(ChatActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 1) {
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
+                                        App.forwardMsg.clear();
+                                        App.forwardMsg.add(msg);
+                                        startActivity(intent);
+                                    } else {
+                                        //删除
+                                        mConv.deleteMessage(msg.getId());
+                                        mAdapter.removeMessage(msg);
+                                    }
+                                }
+
+                                @Override
+                                public void dismiss() {
+
+                                }
+                            })
+                            .create();
+                    //发送方
+                } else {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    float OldListY = (float) location[1];
+                    float OldListX = (float) location[0];
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                            .addItem(new TipItem("复制"))
+                            .addItem(new TipItem("转发"))
+                            .addItem(new TipItem("撤回"))
+                            .addItem(new TipItem("删除"))
+                            .setOnItemClickListener(new TipView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(String str, final int position) {
+                                    if (position == 0) {
+                                        if (msg.getContentType() == ContentType.text) {
+                                            final String content = ((TextContent) msg.getContent()).getText();
+                                            if (Build.VERSION.SDK_INT > 11) {
+                                                ClipboardManager clipboard = (ClipboardManager) mContext
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                                                ClipData clip = ClipData.newPlainText("Simple text", content);
+                                                clipboard.setPrimaryClip(clip);
+                                            } else {
+                                                android.text.ClipboardManager clip = (android.text.ClipboardManager) mContext
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                                                if (clip.hasText()) {
+                                                    clip.getText();
+                                                }
+                                            }
+                                            Toast.makeText(ChatActivity.this, "已复制", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(ChatActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 1) {
+                                        //转发
+                                        if (msg.getContentType() == ContentType.text || msg.getContentType() == ContentType.image ||
+                                                (msg.getContentType() == ContentType.file && (msg.getContent()).getStringExtra("video") != null)) {
+                                            Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
+                                            App.forwardMsg.clear();
+                                            App.forwardMsg.add(msg);
+                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(ChatActivity.this, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 2) {
+                                        //撤回
+                                        mConv.retractMessage(msg, new BasicCallback() {
+                                            @Override
+                                            public void gotResult(int i, String s) {
+                                                if (i == 855001) {
+                                                    Toast.makeText(ChatActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                } else if (i == 0) {
+                                                    mAdapter.delMsgRetract(msg);
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        //删除
+                                        mConv.deleteMessage(msg.getId());
+                                        mAdapter.removeMessage(msg);
+                                    }
+                                }
+
+                                @Override
+                                public void dismiss() {
+
+                                }
+                            })
+                            .create();
+                }
+                //除了文本消息类型之外的消息类型
+            } else {
+                //接收方
+                if (msg.getDirect() == MessageDirect.receive) {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    float OldListY = (float) location[1];
+                    float OldListX = (float) location[0];
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                            .addItem(new TipItem("转发"))
+                            .addItem(new TipItem("删除"))
+                            .setOnItemClickListener(new TipView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(String str, final int position) {
+                                    if (position == 1) {
+                                        //删除
+                                        mConv.deleteMessage(msg.getId());
+                                        mAdapter.removeMessage(msg);
+                                    } else {
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
+                                        App.forwardMsg.clear();
+                                        App.forwardMsg.add(msg);
+                                        startActivity(intent);
+                                    }
+                                }
+
+                                @Override
+                                public void dismiss() {
+
+                                }
+                            })
+                            .create();
+                    //发送方
+                } else {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    float OldListY = (float) location[1];
+                    float OldListX = (float) location[0];
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                            .addItem(new TipItem("转发"))
+                            .addItem(new TipItem("撤回"))
+                            .addItem(new TipItem("删除"))
+                            .setOnItemClickListener(new TipView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(String str, final int position) {
+                                    if (position == 1) {
+                                        //撤回
+                                        mConv.retractMessage(msg, new BasicCallback() {
+                                            @Override
+                                            public void gotResult(int i, String s) {
+                                                if (i == 855001) {
+                                                    Toast.makeText(ChatActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                } else if (i == 0) {
+                                                    mAdapter.delMsgRetract(msg);
+                                                }
+                                            }
+                                        });
+                                    } else if (position == 0) {
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
+                                        App.forwardMsg.clear();
+                                        App.forwardMsg.add(msg);
+                                        startActivity(intent);
+                                    } else {
+                                        //删除
+                                        mConv.deleteMessage(msg.getId());
+                                        mAdapter.removeMessage(msg);
+                                    }
+                                }
+
+                                @Override
+                                public void dismiss() {
+
+                                }
+                            })
+                            .create();
+                }
+            }
+        }
+    };
 }
