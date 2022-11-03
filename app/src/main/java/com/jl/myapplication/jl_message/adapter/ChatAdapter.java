@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -16,25 +20,32 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
+import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.timepicker.TimeFormat;
-import com.jl.core.log.LogUtils;
 import com.jl.core.utils.DateUtils;
+import com.jl.core.utils.DeviceUtils;
 import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_me.activity.SettingActivity;
 import com.jl.myapplication.jl_message.DialogCreator;
+import com.jl.myapplication.jl_message.FileHelper;
 import com.jl.myapplication.jl_message.HandleResponseCode;
+import com.jl.myapplication.jl_message.activity.DownLoadActivity;
+import com.jl.myapplication.jl_message.activity.MapPickerActivity;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +62,9 @@ import cn.jpush.im.android.api.callback.ProgressUpdateCallback;
 import cn.jpush.im.android.api.content.CustomContent;
 import cn.jpush.im.android.api.content.FileContent;
 import cn.jpush.im.android.api.content.ImageContent;
+import cn.jpush.im.android.api.content.LocationContent;
 import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.content.VoiceContent;
 import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.ConversationType;
 import cn.jpush.im.android.api.enums.MessageDirect;
@@ -60,7 +73,6 @@ import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.android.api.options.MessageSendingOptions;
 import cn.jpush.im.api.BasicCallback;
-
 
 public class ChatAdapter extends BaseAdapter {
     public static final int PAGE_MESSAGE_COUNT = 18;
@@ -106,6 +118,17 @@ public class ChatAdapter extends BaseAdapter {
     public Animation mSendingAnim;
     private ContentLongClickListener mLongClickListener;
     private int mSendMsgId;
+    private float mDensity;
+    private List<Integer> mIndexList = new ArrayList<Integer>();//语音索引
+    private int nextPlayPosition = 0;
+    private boolean autoPlay = false;
+    private final MediaPlayer mp = new MediaPlayer();
+    private AnimationDrawable mVoiceAnimation;
+    private int mPosition = -1;// 和mSetData一起组成判断播放哪条录音的依据
+    private boolean mSetData = false;
+    private FileInputStream mFIS;
+    private FileDescriptor mFD;
+    private boolean mIsEarPhoneOn;
     public ChatAdapter(Activity context, Conversation conv, ContentLongClickListener longClickListener) {
         mContext = context;
         mActivity = context;
@@ -124,11 +147,13 @@ public class ChatAdapter extends BaseAdapter {
         mSendingAnim = AnimationUtils.loadAnimation(mContext, R.anim.jmui_rotate);
         LinearInterpolator lin = new LinearInterpolator();
         mSendingAnim.setInterpolator(lin);
+        DisplayMetrics dm = new DisplayMetrics();
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        this.mDensity = dm.density;
     }
 
     @Override
     public int getCount() {
-        LogUtils.i("聊天" + mMsgList.size());
         return mMsgList.size();
     }
 
@@ -294,7 +319,7 @@ public class ChatAdapter extends BaseAdapter {
 //                }
                 break;
             case voice:
-//                mController.handleVoiceMsg(msg, holder, position);
+                  handleVoiceMsg(msg, holder, position);
                 break;
             case location:
 //                mController.handleLocationMsg(msg, holder, position);
@@ -1079,5 +1104,405 @@ public class ChatAdapter extends BaseAdapter {
         }
     }
 
+    public void addMsgFromReceiptToList(Message msg) {
+        mMsgList.add(msg);
+        msg.setOnSendCompleteCallback(new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                if (i == 0) {
+                    notifyDataSetChanged();
+                } else {
+                    HandleResponseCode.onHandle(mContext, i, false);
+                    notifyDataSetChanged();
+                }
+            }
+        });
+    }
 
+    public void handleVoiceMsg(final Message msg, final ViewHolder holder, final int position) {
+        final VoiceContent content = (VoiceContent) msg.getContent();
+        final MessageDirect msgDirect = msg.getDirect();
+        int length = content.getDuration();
+        String lengthStr = length + "";
+        holder.voiceLength.setText(lengthStr);
+        //控制语音长度显示，长度增幅随语音长度逐渐缩小
+        int width = (int) (-0.04 * length * length + 4.526 * length + 75.214);
+        holder.txtContent.setWidth((int) (width * mDensity));
+        //要设置这个position
+        holder.txtContent.setTag(position);
+        holder.txtContent.setOnLongClickListener(mLongClickListener);
+        if (msgDirect == MessageDirect.send) {
+            holder.voice.setImageResource(R.drawable.send_3);
+            switch (msg.getStatus()) {
+                case created:
+                    holder.sendingIv.setVisibility(View.VISIBLE);
+                    holder.resend.setVisibility(View.GONE);
+                    holder.text_receipt.setVisibility(View.GONE);
+                    break;
+                case send_success:
+                    holder.sendingIv.clearAnimation();
+                    holder.sendingIv.setVisibility(View.GONE);
+                    holder.resend.setVisibility(View.GONE);
+                    holder.text_receipt.setVisibility(View.VISIBLE);
+                    break;
+                case send_fail:
+                    holder.sendingIv.clearAnimation();
+                    holder.sendingIv.setVisibility(View.GONE);
+                    holder.text_receipt.setVisibility(View.GONE);
+                    holder.resend.setVisibility(View.VISIBLE);
+                    break;
+                case send_going:
+                    sendingTextOrVoice(holder, msg);
+                    break;
+                default:
+            }
+        } else switch (msg.getStatus()) {
+            case receive_success:
+                if (mConv.getType() == ConversationType.group) {
+                    holder.displayName.setVisibility(View.VISIBLE);
+                    if (TextUtils.isEmpty(msg.getFromUser().getNickname())) {
+                        holder.displayName.setText(msg.getFromUser().getUserName());
+                    } else {
+                        holder.displayName.setText(msg.getFromUser().getNickname());
+                    }
+                }
+                holder.voice.setImageResource(R.drawable.jmui_receive_3);
+                // 收到语音，设置未读
+                if (msg.getContent().getBooleanExtra("isRead") == null
+                        || !msg.getContent().getBooleanExtra("isRead")) {
+                    mConv.updateMessageExtra(msg, "isRead", false);
+                    holder.readStatus.setVisibility(View.VISIBLE);
+                    if (mIndexList.size() > 0) {
+                        if (!mIndexList.contains(position)) {
+                            addToListAndSort(position);
+                        }
+                    } else {
+                        addToListAndSort(position);
+                    }
+                    if (nextPlayPosition == position && autoPlay) {
+                        playVoice(position, holder, false);
+                    }
+                } else if (msg.getContent().getBooleanExtra("isRead")) {
+                    holder.readStatus.setVisibility(View.GONE);
+                }
+                break;
+            case receive_fail:
+                holder.voice.setImageResource(R.drawable.jmui_receive_3);
+                // 接收失败，从服务器上下载
+                content.downloadVoiceFile(msg,
+                        new DownloadCompletionCallback() {
+                            @Override
+                            public void onComplete(int status, String desc, File file) {
+
+                            }
+                        });
+                break;
+            case receive_going:
+                break;
+            default:
+        }
+
+        if (holder.resend != null) {
+            holder.resend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    if (msg.getContent() != null) {
+                        showResendDialog(holder, msg);
+                    } else {
+                        Toast.makeText(mContext, "暂无外部存储", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+        holder.txtContent.setOnClickListener(new BtnOrTxtListener(position, holder));
+    }
+
+    public class BtnOrTxtListener implements View.OnClickListener {
+
+        private int position;
+        private ViewHolder holder;
+
+        public BtnOrTxtListener(int index, ViewHolder viewHolder) {
+            this.position = index;
+            this.holder = viewHolder;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Message msg = mMsgList.get(position);
+            MessageDirect msgDirect = msg.getDirect();
+            switch (msg.getContentType()) {
+                case voice:
+                    if (!DeviceUtils.isExternalStorageAvailable()) {
+                        Toast.makeText(mContext, "暂无外部存储",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    // 如果之前存在播放动画，无论这次点击触发的是暂停还是播放，停止上次播放的动画
+                    if (mVoiceAnimation != null) {
+                        mVoiceAnimation.stop();
+                    }
+                    // 播放中点击了正在播放的Item 则暂停播放
+                    if (mp.isPlaying() && mPosition == position) {
+                        if (msgDirect == MessageDirect.send) {
+                            holder.voice.setImageResource(R.drawable.jmui_voice_send);
+                        } else {
+                            holder.voice.setImageResource(R.drawable.jmui_voice_receive);
+                        }
+                        mVoiceAnimation = (AnimationDrawable) holder.voice.getDrawable();
+                        pauseVoice(msgDirect, holder.voice);
+                        // 开始播放录音
+                    } else if (msgDirect == MessageDirect.send) {
+                        holder.voice.setImageResource(R.drawable.jmui_voice_send);
+                        mVoiceAnimation = (AnimationDrawable) holder.voice.getDrawable();
+
+                        // 继续播放之前暂停的录音
+                        if (mSetData && mPosition == position) {
+                            mVoiceAnimation.start();
+                            mp.start();
+                            // 否则重新播放该录音或者其他录音
+                        } else {
+                            playVoice(position, holder, true);
+                        }
+                        // 语音接收方特殊处理，自动连续播放未读语音
+                    } else {
+                        try {
+                            // 继续播放之前暂停的录音
+                            if (mSetData && mPosition == position) {
+                                if (mVoiceAnimation != null) {
+                                    mVoiceAnimation.start();
+                                }
+                                mp.start();
+                                // 否则开始播放另一条录音
+                            } else {
+                                // 选中的录音是否已经播放过，如果未播放，自动连续播放这条语音之后未播放的语音
+                                if (msg.getContent().getBooleanExtra("isRead") == null
+                                        || !msg.getContent().getBooleanExtra("isRead")) {
+                                    autoPlay = true;
+                                    playVoice(position, holder, false);
+                                    // 否则直接播放选中的语音
+                                } else {
+                                    holder.voice.setImageResource(R.drawable.jmui_voice_receive);
+                                    mVoiceAnimation = (AnimationDrawable) holder.voice.getDrawable();
+                                    playVoice(position, holder, false);
+                                }
+                            }
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+                case image:
+//                    if (holder.picture != null && v.getId() == holder.picture.getId()) {
+//                        Intent intent = new Intent();
+//                        String targetId = "";
+//                        intent.putExtra("msgId", msg.getId());
+//                        Object targetInfo = mConv.getTargetInfo();
+//                        switch (mConv.getType()) {
+//                            case single:
+//                                targetId = ((UserInfo) targetInfo).getUserName();
+//                                break;
+//                            case group:
+//                                targetId = String.valueOf(((GroupInfo) targetInfo).getGroupID());
+//                                break;
+//                            case chatroom:
+//                                targetId = String.valueOf(((ChatRoomInfo) targetInfo).getRoomID());
+//                                intent.putExtra(BrowserViewPagerActivity.MSG_JSON, msg.toJson());
+//                                intent.putExtra(BrowserViewPagerActivity.MSG_LIST_JSON, getImsgMsgListJson());
+//                                break;
+//                            default:
+//                        }
+//                        intent.putExtra(App.CONV_TYPE, mConv.getType());
+//                        intent.putExtra(App.TARGET_ID, targetId);
+//                        intent.putExtra(App.TARGET_APP_KEY, mConv.getTargetAppKey());
+//                        intent.putExtra("msgCount", mMsgList.size());
+//                        intent.putIntegerArrayListExtra(App.MsgIDs, getImgMsgIDList());
+//                        intent.putExtra("fromChatActivity", true);
+//                        intent.setClass(mContext, BrowserViewPagerActivity.class);
+//                        mContext.startActivity(intent);
+//                    }
+                    break;
+                case location:
+                    if (holder.picture != null && v.getId() == holder.picture.getId()) {
+                        Intent intent = new Intent(mContext, MapPickerActivity.class);
+                        LocationContent locationContent = (LocationContent) msg.getContent();
+                        intent.putExtra("latitude", locationContent.getLatitude().doubleValue());
+                        intent.putExtra("longitude", locationContent.getLongitude().doubleValue());
+                        intent.putExtra("locDesc", locationContent.getAddress());
+                        intent.putExtra("sendLocation", false);
+                        mContext.startActivity(intent);
+                    }
+                    break;
+                case file:
+                    FileContent content = (FileContent) msg.getContent();
+                    String fileName = content.getFileName();
+                    String extra = content.getStringExtra("video");
+                    if (extra != null) {
+                        fileName = msg.getServerMessageId() + "." + extra;
+                    }
+                    final String path = content.getLocalPath();
+                    if (path != null && new File(path).exists()) {
+                        final String newPath = App.FILE_DIR + fileName;
+                        File file = new File(newPath);
+                        if (file.exists() && file.isFile()) {
+                            browseDocument(fileName, newPath);
+                        } else {
+                            final String finalFileName = fileName;
+                            FileHelper.getInstance().copyFile(fileName, path, (Activity) mContext,
+                                    new FileHelper.CopyFileCallback() {
+                                        @Override
+                                        public void copyCallback(Uri uri) {
+                                            browseDocument(finalFileName, newPath);
+                                        }
+                                    });
+                        }
+                    } else {
+                        org.greenrobot.eventbus.EventBus.getDefault().postSticky(msg);
+                        Intent intent = new Intent(mContext, DownLoadActivity.class);
+                        mContext.startActivity(intent);
+                    }
+                    break;
+            }
+
+        }
+    }
+
+    private void addToListAndSort(int position) {
+        mIndexList.add(position);
+        Collections.sort(mIndexList);
+    }
+
+    public void playVoice(final int position, final ViewHolder holder, final boolean isSender) {
+        // 记录播放录音的位置
+        mPosition = position;
+        Message msg = mMsgList.get(position);
+        if (autoPlay) {
+            mConv.updateMessageExtra(msg, "isRead", true);
+            holder.readStatus.setVisibility(View.GONE);
+            if (mVoiceAnimation != null) {
+                mVoiceAnimation.stop();
+                mVoiceAnimation = null;
+            }
+            holder.voice.setImageResource(R.drawable.jmui_voice_receive);
+            mVoiceAnimation = (AnimationDrawable) holder.voice.getDrawable();
+        }
+        try {
+            mp.reset();
+            VoiceContent vc = (VoiceContent) msg.getContent();
+            mFIS = new FileInputStream(vc.getLocalPath());
+            mFD = mFIS.getFD();
+            mp.setDataSource(mFD);
+            if (mIsEarPhoneOn) {
+                mp.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+            } else {
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            }
+            mp.prepare();
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mVoiceAnimation.start();
+                    mp.start();
+                }
+            });
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mVoiceAnimation.stop();
+                    mp.reset();
+                    mSetData = false;
+                    if (isSender) {
+                        holder.voice.setImageResource(R.drawable.send_3);
+                    } else {
+                        holder.voice.setImageResource(R.drawable.jmui_receive_3);
+                    }
+                    if (autoPlay) {
+                        int curCount = mIndexList.indexOf(position);
+                        if (curCount + 1 >= mIndexList.size()) {
+                            nextPlayPosition = -1;
+                            autoPlay = false;
+                        } else {
+                            nextPlayPosition = mIndexList.get(curCount + 1);
+                            notifyDataSetChanged();
+                        }
+                        mIndexList.remove(curCount);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(mContext, "文件丢失, 尝试重新获取",
+                    Toast.LENGTH_SHORT).show();
+            VoiceContent vc = (VoiceContent) msg.getContent();
+            vc.downloadVoiceFile(msg, new DownloadCompletionCallback() {
+                @Override
+                public void onComplete(int status, String desc, File file) {
+                    if (status == 0) {
+                        Toast.makeText(mContext, "下载完成",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "文件获取失败",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } finally {
+            try {
+                if (mFIS != null) {
+                    mFIS.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void pauseVoice(MessageDirect msgDirect, ImageView voice) {
+        if (msgDirect == MessageDirect.send) {
+            voice.setImageResource(R.drawable.send_3);
+        } else {
+            voice.setImageResource(R.drawable.jmui_receive_3);
+        }
+        mp.pause();
+        mSetData = true;
+    }
+
+    private ArrayList<Integer> getImgMsgIDList() {
+        ArrayList<Integer> imgMsgIDList = new ArrayList<Integer>();
+        for (Message msg : mMsgList) {
+            if (msg.getContentType() == ContentType.image) {
+                imgMsgIDList.add(msg.getId());
+            }
+        }
+        return imgMsgIDList;
+    }
+
+    private String getImsgMsgListJson() {
+        List<Message> messages = new ArrayList<>();
+        for (Message msg : mMsgList) {
+            if (msg.getContentType() == ContentType.image) {
+                messages.add(msg);
+            }
+        }
+        return Message.collectionToJson(messages);
+    }
+
+    private void browseDocument(String fileName, String path) {
+        try {
+            String ext = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            String mime = mimeTypeMap.getMimeTypeFromExtension(ext);
+            File file = new File(path);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(file), mime);
+            mContext.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(mContext, "无法打开该类型的文件", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

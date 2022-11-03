@@ -114,7 +114,6 @@ public class SettingActivity extends BaseActivity {
                 .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
                 .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
                 .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
-
     }
 
     @Override

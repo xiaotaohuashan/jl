@@ -65,6 +65,8 @@ public class App extends Application {
     public static final int RESULT_CODE_AT_ALL = 32;
     public static final int RESULT_CODE_AT_MEMBER = 31;
     public static final String MSG_JSON = "msg_json";
+    public static final String MsgIDs = "msgIDs";
+    public static final String POSITION = "position";
     @Override
     public void onCreate() {
         super.onCreate();

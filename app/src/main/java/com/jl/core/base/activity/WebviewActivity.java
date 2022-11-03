@@ -13,14 +13,11 @@ import com.jl.core.utils.StringUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityWebviewBinding;
 
-
 // Webview公共页面
 public class WebviewActivity extends BaseActivity {
     private ActivityWebviewBinding binding;
     private String mTitle;
     private RelativeLayout mLlMain;
-
-
 
     @Override
     protected int getLayoutId() {

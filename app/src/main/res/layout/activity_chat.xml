@@ -39,6 +39,20 @@
                     android:layout_marginLeft="12dp"
                     android:src="@drawable/btn_voice_or_text"/>
 
+                <!--语音输入-->
+                <com.jl.myapplication.jl_message.RecordVoiceButton
+                    android:id="@+id/btn_voice"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toLeftOf="@+id/rl_multi_and_send"
+                    android:layout_toRightOf="@+id/btn_voice_or_text"
+                    android:background="@drawable/btn_voice"
+                    android:text="按住录音"
+                    android:textColor="#727272"
+                    android:visibility="gone"/>
+
                 <RelativeLayout
                     android:id="@+id/rl_input"
                     android:layout_width="match_parent"

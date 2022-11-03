@@ -1,12 +1,11 @@
 package com.jl.myapplication.jl_message.activity;
 
-
-
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.jl.myapplication.App.TARGET_APP_KEY;
 import static com.jl.myapplication.App.TARGET_ID;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -19,6 +18,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.jl.core.base.activity.BaseActivity;
+import com.jl.core.utils.EmoticonsKeyboardUtils;
+import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityChatBinding;
@@ -26,6 +27,8 @@ import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_message.TipItem;
 import com.jl.myapplication.jl_message.TipView;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,16 +128,26 @@ public class ChatActivity extends BaseActivity {
                 mBinding.etChat.setText("");
             }
         });
+        //切换语音输入
+        mBinding.btnVoiceOrText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = v.getId();
+                if (i == R.id.btn_voice_or_text) {
+                    requestPermission();
+                }
+            }
+        });
     }
 
     private void scrollToBottom() {
-//        mBinding.listview.requestLayout();
-//        mBinding.listview.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mBinding.listview.setSelection(mBinding.listview.getBottom());
-//            }
-//        });
+        mBinding.listview.requestLayout();
+        mBinding.listview.post(new Runnable() {
+            @Override
+            public void run() {
+                mBinding.listview.setSelection(mBinding.listview.getBottom());
+            }
+        });
     }
 
     public void onEvent(CommandNotificationEvent event) {
@@ -371,4 +384,39 @@ public class ChatActivity extends BaseActivity {
             }
         }
     };
+
+    public  void setVideoText() {
+        EmoticonsKeyboardUtils.hintKbTwo(this);
+        if (mBinding.rlInput.isShown()) {
+            mBinding.btnVoiceOrText.setImageResource(R.drawable.btn_voice_or_text_keyboard);
+            mBinding.rlInput.setVisibility(GONE);
+            mBinding.btnVoice.setVisibility(VISIBLE);
+        } else {
+            mBinding.rlInput.setVisibility(VISIBLE);
+            mBinding.btnVoice.setVisibility(GONE);
+            mBinding.btnVoiceOrText.setImageResource(R.drawable.btn_voice_or_text);
+        }
+    }
+
+    // 请求权限
+    public void requestPermission() {
+        if (AndPermission.hasPermissions(this, android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO)) {
+            setVideoText();
+            mBinding.btnVoice.initConv(mConv, mAdapter, mBinding.listview);
+        }else {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE,Permission.RECORD_AUDIO)
+                    .onGranted(permissions -> {
+                        setVideoText();
+                        mBinding.btnVoice.initConv(mConv, mAdapter, mBinding.listview);
+                    })
+                    .onDenied(permissions -> {
+                        ToastUtils.show( "需要录音权限");
+                    })
+                    .start();
+        }
+    }
 }

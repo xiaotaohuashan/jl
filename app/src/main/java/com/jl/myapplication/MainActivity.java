@@ -3,6 +3,7 @@ package com.jl.myapplication;
 import androidx.fragment.app.Fragment;
 
 
+import android.Manifest;
 import android.os.Process;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,6 +18,11 @@ import com.jl.myapplication.jl_home.fragment.MeFragment;
 import com.jl.myapplication.jl_home.fragment.ShoppingCarFragment;
 import com.jl.myapplication.jl_home.fragment.HomeFragment;
 import com.jl.myapplication.jl_home.fragment.OrganizationFragment;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.runtime.Permission;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity {
@@ -41,7 +47,7 @@ public class MainActivity extends BaseActivity {
         createFragment();
         mBinding.tabHome.setSelected(true);
         switchFragment(mHomeFragment);
-
+        requestPermission();
     }
 
     @Override
@@ -143,5 +149,25 @@ public class MainActivity extends BaseActivity {
             }
         }
         return false;
+    }
+
+    private void requestPermission() {
+        if (AndPermission.hasPermissions(this, android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO)) {
+            return;
+        }else {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE,Permission.CAMERA,Permission.RECORD_AUDIO)
+                    .onGranted(permissions -> {
+
+                    })
+                    .onDenied(permissions -> {
+                        // Storage permission are not allowed.
+                    })
+                    .start();
+        }
     }
 }

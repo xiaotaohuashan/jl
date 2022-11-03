@@ -19,8 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jl.myapplication.App;
 import com.jl.myapplication.R;
-import com.jl.myapplication.jl_message.utils.SharePreferenceManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,6 +41,23 @@ import cn.jpush.im.api.BasicCallback;
 
 public class DialogCreator {
     public static Dialog mLoadingDialog;
+
+    public static Dialog createLoadingDialog(Context context, String msg) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View v = inflater.inflate(IdHelper.getLayout(context, "jmui_loading_view"), null);
+        RelativeLayout layout = (RelativeLayout) v.findViewById(IdHelper.getViewID(context, "jmui_dialog_view"));
+        ImageView mLoadImg = (ImageView) v.findViewById(IdHelper.getViewID(context, "jmui_loading_img"));
+        TextView mLoadText = (TextView) v.findViewById(IdHelper.getViewID(context, "jmui_loading_txt"));
+        AnimationDrawable mDrawable = (AnimationDrawable) mLoadImg.getDrawable();
+        mDrawable.start();
+        mLoadText.setText(msg);
+        final Dialog loadingDialog = new Dialog(context, R.style.loading_dialog);
+        loadingDialog.setCancelable(true);
+        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        return loadingDialog;
+    }
 
     public static Dialog createBaseCustomDialog(Context context, String title, String text,
                                                 View.OnClickListener onClickListener) {
@@ -307,4 +324,7 @@ public class DialogCreator {
         dialog.setCanceledOnTouchOutside(true);
         return dialog;
     }
+
+
+
 }

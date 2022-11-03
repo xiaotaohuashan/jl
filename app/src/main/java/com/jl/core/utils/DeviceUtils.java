@@ -151,6 +151,7 @@ public class DeviceUtils {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
+
     /**
      * 手机内部存储空间
      * @return
