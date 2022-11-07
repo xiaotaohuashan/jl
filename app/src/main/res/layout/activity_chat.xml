@@ -23,10 +23,15 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/black"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:background="@color/white"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp">
 
@@ -123,6 +128,23 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/black"/>
+
+            <GridView
+                android:id="@+id/gv_apps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:horizontalSpacing="10dip"
+                android:listSelector="@android:color/transparent"
+                android:numColumns="4"
+                android:visibility="gone"
+                android:verticalSpacing="30dip" />
         </LinearLayout>
     </RelativeLayout>
 

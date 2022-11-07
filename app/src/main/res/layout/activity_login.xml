@@ -146,10 +146,20 @@
                 android:layout_marginTop="18dp">
 
                 <TextView
-                    android:id="@+id/login_phone_verify_tv"
+                    android:id="@+id/login_phone_password_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="密码登录"
+                    android:textColor="#999999"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/login_phone_verify_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="验证码登录"
                     android:textColor="#999999"
                     android:textSize="13sp" />
 
@@ -227,7 +237,7 @@
                 android:id="@+id/login_protocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123456"
+                android:text="《用户协议》"
                 android:textSize="12sp"
                 android:textColor="#60A7F2" />
         </LinearLayout>
@@ -247,12 +257,6 @@
                 android:indeterminate="false"
                 android:indeterminateDrawable="@drawable/loading" />
         </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/iv"
-            android:background="@color/red"
-            android:layout_width="200dp"
-            android:layout_height="200dp"/>
 
     </RelativeLayout>
 </layout>

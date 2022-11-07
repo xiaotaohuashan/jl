@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import androidx.annotation.StringRes;
 
 import com.jl.core.log.LogUtils;
+import com.jl.myapplication.config.Configs;
 
 import java.math.BigDecimal;
 
@@ -251,4 +252,51 @@ public class StringUtil {
         }
         return true;
     }
+
+    /**
+     * 校验手机号格式
+     *
+     * @param phoneNumber
+     * @return
+     */
+    public static boolean checkPhoneNumber(String phoneNumber) {
+        if (TextUtils.isEmpty(phoneNumber)) {
+            return false;
+        }
+        return phoneNumber.matches(Configs.PHONE_NUMBER_REGEX);
+    }
+
+    /**
+     * 校验验证码格式  6位
+     *
+     * @param verifyCode
+     * @return
+     */
+    public static boolean checkVerifyCode(String verifyCode) {
+        if (TextUtils.isEmpty(verifyCode)) {
+            return false;
+        }
+        String trim = verifyCode.trim();
+        return TextUtils.isDigitsOnly(trim) && trim.length() == 6;
+    }
+
+    /**
+     * 校验密码格式  8-16位字母数字组合
+     *
+     * @param password
+     * @return
+     */
+    public static boolean checkPassword(String password) {
+        if (TextUtils.isEmpty(password)) {
+            return false;
+        }
+        if (password.length() > 16 || password.length() < 8) {
+            return false;
+        }
+        if (password.matches(Configs.PASSWORD_REGEX)) {
+            return !TextUtils.isDigitsOnly(password) && !password.matches(Configs.CHARACTOR_REGEX);
+        }
+        return false;
+    }
+
 }

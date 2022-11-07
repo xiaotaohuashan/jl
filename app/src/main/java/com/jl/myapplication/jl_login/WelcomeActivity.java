@@ -7,6 +7,8 @@ import android.os.Message;
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.SettingsUtil;
 
+import com.jl.core.utils.StringUtil;
+import com.jl.myapplication.MainActivity;
 import com.jl.myapplication.R;
 
 public class WelcomeActivity extends BaseActivity {
@@ -51,7 +53,11 @@ public class WelcomeActivity extends BaseActivity {
             // 去引导页面
             gotoGuide();
         } else {
-            gotoLogin();
+            if (!StringUtil.isEmpty(SettingsUtil.getTrueName()) && !StringUtil.isEmpty(SettingsUtil.getPassword())) {
+                gotoApp();
+            }else {
+                gotoLogin();
+            }
         }
     }
 
@@ -65,6 +71,13 @@ public class WelcomeActivity extends BaseActivity {
     //未登录去登录
     private void gotoLogin() {
         Intent it = new Intent(WelcomeActivity.this, LoginActivity.class);
+        startActivity(it);
+        finish();
+    }
+
+    //已登录，进入app
+    private void gotoApp() {
+        Intent it = new Intent(WelcomeActivity.this, MainActivity.class);
         startActivity(it);
         finish();
     }

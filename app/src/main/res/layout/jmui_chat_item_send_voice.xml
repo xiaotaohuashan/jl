@@ -39,7 +39,6 @@
                 android:layout_marginRight="20dp"
                 android:background="@drawable/jmui_voice_send"/>
 
-
             <TextView
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="14dp"

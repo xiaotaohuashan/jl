@@ -4,6 +4,10 @@ import static com.jl.myapplication.App.getContext;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,17 +23,28 @@ import com.jl.core.utils.AesEncryptUtil;
 import com.jl.core.utils.JsonUtils;
 import com.jl.core.utils.SettingsUtil;
 import com.jl.core.utils.StringUtil;
+import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.MainActivity;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityLoginBinding;
+import com.jl.myapplication.jl_login.activity.OwnerResetPasswordActivity;
+import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.model.HelpStoreParamForPage;
 import com.jl.myapplication.model.LoginBean;
 import com.jl.myapplication.model.PasswordBean;
 
 
 public class LoginActivity extends BaseActivity {
+    private CountDownTimer countDownTimer;
     private ActivityLoginBinding mBinding;
+    private boolean isVerifyLogin = true;
+    private boolean dataCheckFlag = true;
+    private static final long COUNT_DOWN_PERIOD = 60 * 1000L;
+    private boolean countFlag = false;
+    private static final int VERIFY_ENABLE = 0;
+    private static final int VERIFY_DISABLE = 1;
+    private boolean isPasswordVisible = false;
 
     @Override
     protected int getLayoutId() {
@@ -39,13 +54,36 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         mBinding = getBindView();
-        if (!StringUtil.isEmpty(SettingsUtil.getTrueName()) && !StringUtil.isEmpty(SettingsUtil.getPassword()) && !StringUtil.isEmpty(SettingsUtil.getUserType())) {
-            loginPw(mActivity, SettingsUtil.getTrueName(), SettingsUtil.getPassword(), SettingsUtil.getUserType());
-        }
-        Intent it = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(it);
-        finish();
+//        Intent it = new Intent(LoginActivity.this, MainActivity.class);
+//        startActivity(it);
+//        finish();
+        countDownTimer = new CountDownTimer(COUNT_DOWN_PERIOD + 600, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mBinding.loginGetVerifyCodeTv.setText(String.format(getString(R.string.verify_count_down_text), millisUntilFinished / 1000));
+                getVerifyCodeStatus(VERIFY_DISABLE);
+                countFlag = true;
+            }
 
+            @Override
+            public void onFinish() {
+                mBinding.loginGetVerifyCodeTv.setText("获取验证码");
+                getVerifyCodeStatus(VERIFY_ENABLE);
+                countFlag = false;
+            }
+        };
+    }
+
+    private void getVerifyCodeStatus(int state) {
+        if (state == VERIFY_ENABLE) {
+            mBinding.loginGetVerifyCodeTv.setTextColor(getResources().getColor(R.color.login_verify_enable));
+            mBinding.loginGetVerifyCodeTv.setBackground(getResources().getDrawable(R.drawable.button_edge));
+            mBinding.loginGetVerifyCodeTv.setEnabled(true);
+        } else {
+            mBinding.loginGetVerifyCodeTv.setTextColor(getResources().getColor(R.color.login_verify_disable));
+            mBinding.loginGetVerifyCodeTv.setBackground(getResources().getDrawable(R.drawable.foreman_change_uncheck));
+            mBinding.loginGetVerifyCodeTv.setEnabled(false);
+        }
     }
 
     @Override
@@ -54,15 +92,14 @@ public class LoginActivity extends BaseActivity {
         mBinding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(it);
-                finish();
+                doLogin();
             }
         });
         mBinding.loginProtocol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(LoginActivity.this, AboutUseActivity.class);
+                startActivity(intent);
             }
         });
         mBinding.loginWechat.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +108,150 @@ public class LoginActivity extends BaseActivity {
                 if (!isFastClick()) {
                     wxLogin();
                 }
+            }
+        });
+        mBinding.loginPhonePasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (!isVerifyLogin) {
+//                    mBinding.loginPhoneVerifyTv.setText("密码登录");
+                mBinding.loginLayoutVerifyCode.setVisibility(View.GONE);
+                mBinding.loginLayoutPsw.setVisibility(View.VISIBLE);
+                mBinding.loginBtn.setText("登录");
+                isVerifyLogin = false;
+                dataCheckFlag = false;
+//                } else {
+//                    mBinding.loginPhoneVerifyTv.setText("验证码登录");
+//                    mBinding.loginLayoutVerifyCode.setVisibility(View.GONE);
+//                    mBinding.loginLayoutPsw.setVisibility(View.VISIBLE);
+//                    mBinding.loginBtn.setText("登录");
+//                    dataCheckFlag = false;
+//                }
+//                isVerifyLogin = !isVerifyLogin;
+                passwordLoginButtonisGreen();
+//                verifyCodeLoginButtonisGreen();
+            }
+        });
+        mBinding.loginPhoneVerifyTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (!isVerifyLogin) {
+//                    mBinding.loginPhoneVerifyTv.setText("密码登录");
+//                    mBinding.loginLayoutPsw.setVisibility(View.GONE);
+//                    mBinding.loginLayoutVerifyCode.setVisibility(View.VISIBLE);
+//                    mBinding.loginBtn.setText("登录/注册");
+//                    dataCheckFlag = true;
+//                    passwordLoginButtonisGreen();
+//                } else {
+//                    mBinding.loginPhoneVerifyTv.setText("验证码登录");
+
+
+                mBinding.loginLayoutPsw.setVisibility(View.GONE);
+                mBinding.loginLayoutVerifyCode.setVisibility(View.VISIBLE);
+                mBinding.loginBtn.setText("登录/注册");
+                isVerifyLogin = true;
+                dataCheckFlag = true;
+//                passwordLoginButtonisGreen();
+//                }
+//                isVerifyLogin = !isVerifyLogin;
+                verifyCodeLoginButtonisGreen();
+            }
+        });
+        mBinding.loginGetVerifyCodeTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchVerify();
+            }
+        });
+
+        LoginWatcher watcher = new LoginWatcher();
+        mBinding.loginPhoneEt.addTextChangedListener(watcher);
+        mBinding.loginPswEt.addTextChangedListener(watcher);
+        mBinding.loginVerifyCodeEt.addTextChangedListener(watcher);
+
+        mBinding.loginBtn.setEnabled(false);
+        mBinding.loginBtn.setClickable(false);
+        mBinding.loginPhoneEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                if (mBinding.loginPhoneEt.getText().toString().length()==11 && isVerifyLogin && mBinding.loginVerifyCodeEt.getText().toString().length() > 0 ||
+                        mBinding.loginPhoneEt.getText().toString().length()==11 && !isVerifyLogin && mBinding.loginPswEt.getText().toString().length() > 0){
+                    mBinding.loginBtn.setBackgroundResource(R.drawable.login_green_shape);
+                    mBinding.loginBtn.setEnabled(true);
+                    mBinding.loginBtn.setClickable(true);
+                }else {
+                    mBinding.loginBtn.setBackgroundResource(R.drawable.login_grey_shape);
+                    mBinding.loginBtn.setEnabled(false);
+                    mBinding.loginBtn.setClickable(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mBinding.loginPswEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                passwordLoginButtonisGreen();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mBinding.loginVerifyCodeEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                verifyCodeLoginButtonisGreen();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mBinding.loginPhoneIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPasswordVisible) {
+                    mBinding.loginPhoneIv.setImageDrawable(getResources().getDrawable(R.mipmap.eyes_open));
+                    isPasswordVisible = false;
+                    mBinding.loginPswEt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                } else {
+                    mBinding.loginPhoneIv.setImageDrawable(getResources().getDrawable(R.mipmap.eyes_close));
+                    isPasswordVisible = true;
+                    mBinding.loginPswEt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                }
+            }
+        });
+        mBinding.loginForgetPswTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                jumpToActivity(OwnerResetPasswordActivity.class);
             }
         });
     }
@@ -253,4 +434,89 @@ public class LoginActivity extends BaseActivity {
 //            }
 //        });
     }
+
+    // 密码登录时登录按钮是否可点击
+    private void passwordLoginButtonisGreen(){
+        if (mBinding.loginPhoneEt.getText().toString().length()==11 && !isVerifyLogin && mBinding.loginPswEt.getText().toString().length() > 0){
+            mBinding.loginBtn.setBackgroundResource(R.drawable.login_green_shape);
+            mBinding.loginBtn.setEnabled(true);
+            mBinding.loginBtn.setClickable(true);
+        }else {
+            mBinding.loginBtn.setBackgroundResource(R.drawable.login_grey_shape);
+            mBinding.loginBtn.setEnabled(false);
+            mBinding.loginBtn.setClickable(false);
+        }
+    }
+
+    // 验证码登录时登录按钮是否可点击
+    private void verifyCodeLoginButtonisGreen(){
+        if (mBinding.loginPhoneEt.getText().toString().length()==11 && isVerifyLogin && mBinding.loginVerifyCodeEt.getText().toString().length() > 0){
+            mBinding.loginBtn.setBackgroundResource(R.drawable.login_green_shape);
+            mBinding.loginBtn.setEnabled(true);
+            mBinding.loginBtn.setClickable(true);
+        }else {
+            mBinding.loginBtn.setBackgroundResource(R.drawable.login_grey_shape);
+            mBinding.loginBtn.setEnabled(false);
+            mBinding.loginBtn.setClickable(false);
+        }
+    }
+
+    private void doLogin() {
+        String phoneNumber = mBinding.loginPhoneEt.getText().toString();
+        if (!StringUtil.checkPhoneNumber(phoneNumber)) {
+            ToastUtils.show(this, "请输入正确的手机号码");
+            return;
+        }
+
+        if (dataCheckFlag) {
+            String verifyCode = mBinding.loginVerifyCodeEt.getText().toString();
+            if (verifyCode.length() != 6) {
+                ToastUtils.show(this, "请输入6位验证码");
+                return;
+            }
+            Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(it);
+            finish();
+        } else {
+            String password = mBinding.loginPswEt.getText().toString();
+            if (password.length() < 8 || password.length() > 16) {
+                ToastUtils.show(this, "请输入8-16位密码");
+                return;
+            }
+            SettingsUtil.setTrueName(phoneNumber);
+            SettingsUtil.setPassword(password);
+            Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(it);
+            finish();
+        }
+
+    }
+
+    private void fetchVerify() {
+        ToastUtils.show("验证码发送成功");
+        countDownTimer.start();
+    }
+
+    private class LoginWatcher implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (StringUtil.checkPhoneNumber(mBinding.loginPhoneEt.getText().toString()) && !countFlag) {
+                getVerifyCodeStatus(VERIFY_ENABLE);
+            } else {
+                getVerifyCodeStatus(VERIFY_DISABLE);
+            }
+        }
+    }
+
 }

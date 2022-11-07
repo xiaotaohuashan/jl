@@ -1,9 +1,12 @@
 package com.jl.myapplication;
 
+import static com.jl.myapplication.App.REQUEST_CODE_SCAN;
+
 import androidx.fragment.app.Fragment;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Process;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +23,7 @@ import com.jl.myapplication.jl_home.fragment.HomeFragment;
 import com.jl.myapplication.jl_home.fragment.OrganizationFragment;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
+import com.yzq.zxinglibrary.common.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +172,20 @@ public class MainActivity extends BaseActivity {
                         // Storage permission are not allowed.
                     })
                     .start();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // 扫描二维码/条码回传
+        if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
+//            if (data != null) {
+//
+//                String content = data.getStringExtra(Constant.CODED_CONTENT);
+//                result.setText("扫描结果为：" + content);
+//            }
         }
     }
 }

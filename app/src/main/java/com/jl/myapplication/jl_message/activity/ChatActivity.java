@@ -6,16 +6,21 @@ import static com.jl.myapplication.App.TARGET_APP_KEY;
 import static com.jl.myapplication.App.TARGET_ID;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.EmoticonsKeyboardUtils;
@@ -24,14 +29,21 @@ import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ActivityChatBinding;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
+import com.jl.myapplication.jl_message.AppBean;
+import com.jl.myapplication.jl_message.AppsAdapter;
+import com.jl.myapplication.jl_message.ImageEvent;
 import com.jl.myapplication.jl_message.TipItem;
 import com.jl.myapplication.jl_message.TipView;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.TextContent;
@@ -70,6 +82,17 @@ public class ChatActivity extends BaseActivity {
         }
         mAdapter = new ChatAdapter(this,mConv,longClickListener);
         mBinding.listview.setAdapter(mAdapter);
+
+        ArrayList<AppBean> mAppBeanList = new ArrayList<>();
+        mAppBeanList.add(new AppBean(R.mipmap.icon_photo, "图片"));
+        mAppBeanList.add(new AppBean(R.mipmap.icon_camera, "拍摄"));
+        mAppBeanList.add(new AppBean(R.mipmap.icon_file, "文件"));
+        mAppBeanList.add(new AppBean(R.mipmap.icon_loaction, "位置"));
+        mAppBeanList.add(new AppBean(R.mipmap.businesscard, "名片"));
+//        mAppBeanList.add(new AppBean(R.mipmap.icon_audio, "视频"));
+//        mAppBeanList.add(new AppBean(R.mipmap.icon_voice, "语音"));
+        AppsAdapter adapter = new AppsAdapter(this, mAppBeanList);
+        mBinding.gvApps.setAdapter(adapter);
     }
 
     @Override
@@ -135,6 +158,16 @@ public class ChatActivity extends BaseActivity {
                 int i = v.getId();
                 if (i == R.id.btn_voice_or_text) {
                     requestPermission();
+                }
+            }
+        });
+        mBinding.btnMultimedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBinding.gvApps.getVisibility() == GONE){
+                    mBinding.gvApps.setVisibility(VISIBLE);
+                }else {
+                    mBinding.gvApps.setVisibility(GONE);
                 }
             }
         });
@@ -419,4 +452,74 @@ public class ChatActivity extends BaseActivity {
                     .start();
         }
     }
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEventMainThread(ImageEvent event) {
+//        Intent intent;
+//        switch (event.getFlag()) {
+//            case App.IMAGE_MESSAGE:
+//                int from = PickImageActivity.FROM_LOCAL;
+//                int requestCode = RequestCode.PICK_IMAGE;
+//                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+//                } else {
+//                    PickImageActivity.start(ChatActivity.this, requestCode, from, tempFile(), true, 9,
+//                            true, false, 0, 0);
+//                }
+//                break;
+//            case App.TAKE_PHOTO_MESSAGE:
+//                if ((ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.CAMERA)
+//                        != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO)
+//                        != PackageManager.PERMISSION_GRANTED)) {
+//                    Toast.makeText(this, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
+//                } else {
+//                    intent = new Intent(ChatActivity.this, CameraActivity.class);
+//                    startActivityForResult(intent, RequestCode.TAKE_PHOTO);
+//                }
+//                break;
+//            case App.TAKE_LOCATION:
+//                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "请在应用管理中打开“位置”访问权限！", Toast.LENGTH_LONG).show();
+//                } else {
+//                    intent = new Intent(mContext, MapPickerActivity.class);
+//                    intent.putExtra(App.CONV_TYPE, mConv.getType());
+//                    intent.putExtra(App.TARGET_ID, mTargetId);
+//                    intent.putExtra(App.TARGET_APP_KEY, mTargetAppKey);
+//                    intent.putExtra("sendLocation", true);
+//                    startActivityForResult(intent, App.REQUEST_CODE_SEND_LOCATION);
+//                }
+//                break;
+//            case App.FILE_MESSAGE:
+//                if (ContextCompat.checkSelfPermission(this,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+//
+//                } else {
+//                    intent = new Intent(mContext, SendFileActivity.class);
+//                    intent.putExtra(App.TARGET_ID, mTargetId);
+//                    intent.putExtra(App.TARGET_APP_KEY, mTargetAppKey);
+//                    intent.putExtra(App.CONV_TYPE, mConv.getType());
+//                    startActivityForResult(intent, App.REQUEST_CODE_SEND_FILE);
+//                }
+//                break;
+//            case App.BUSINESS_CARD:
+//                intent = new Intent(mContext, FriendListActivity.class);
+//                intent.putExtra(App.CONV_TYPE, mConv.getType());
+//                intent.putExtra(App.TARGET_ID, mTargetId);
+//                intent.putExtra(App.TARGET_APP_KEY, mTargetAppKey);;
+//                startActivityForResult(intent, App.REQUEST_CODE_FRIEND_LIST);
+//                break;
+//            case App.TACK_VIDEO:
+//            case App.TACK_VOICE:
+//                ToastUtils.show(mContext, "该功能正在添加中");
+//                break;
+//            default:
+//                break;
+//        }
+//
+//    }
 }

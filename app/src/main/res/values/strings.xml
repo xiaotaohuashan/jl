@@ -37,4 +37,7 @@
     <string name="jmui_month">月</string>
     <string name="jmui_day">日</string>
     <string name="second">秒</string>
+    <string name="verify_count_down_text">已发送(%ds)</string>
+    <string name="password_not_equal">* 两次密码输入不一致</string>
+    <string name="login_password_tip">* 密码长度8位以上，必须包含字母、数字两种元素</string>
 </resources>

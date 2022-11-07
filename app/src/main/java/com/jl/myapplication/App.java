@@ -67,6 +67,9 @@ public class App extends Application {
     public static final String MSG_JSON = "msg_json";
     public static final String MsgIDs = "msgIDs";
     public static final String POSITION = "position";
+    public static final int REQUEST_CODE_SCAN = 999;
+
+
     @Override
     public void onCreate() {
         super.onCreate();

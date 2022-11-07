@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        tools:context=".jl_login.activity.ChangePassActivity">
+
+        <include layout="@layout/titlebar" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E4E8ED" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="18dp">
+
+            <com.jl.core.view.ClearEditText
+                android:id="@+id/changePass_currentPassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/radius_lgray_stroke_shape"
+                android:drawableRight="@mipmap/login_delete_icon"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:hint="请输入旧密码"
+                android:inputType="textPassword"
+                android:maxLength="16"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/text1"
+                android:textColorHint="@color/login_edit_hint_color"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="18dp">
+
+            <com.jl.core.view.ClearEditText
+                android:id="@+id/changePass_newPassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/radius_lgray_stroke_shape"
+                android:drawableRight="@mipmap/login_delete_icon"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:hint="请输入新密码"
+                android:inputType="textPassword"
+                android:maxLength="16"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/text1"
+                android:textColorHint="@color/login_edit_hint_color"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="18dp">
+
+            <com.jl.core.view.ClearEditText
+                android:id="@+id/changePass_surePassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/radius_lgray_stroke_shape"
+                android:drawableRight="@mipmap/login_delete_icon"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:hint="确认新密码"
+                android:inputType="textPassword"
+                android:maxLength="16"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/text1"
+                android:textColorHint="@color/login_edit_hint_color"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="18dp"
+            android:text="@string/login_password_tip"
+            android:textColor="#E75946"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/change_pass_different_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="18dp"
+            android:text="@string/password_not_equal"
+            android:textColor="#E75946"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="18dp">
+
+            <TextView
+                android:id="@+id/changePass_sureTv"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/btnunnext"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="确认"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

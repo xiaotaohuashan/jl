@@ -29,6 +29,8 @@
             <com.jl.core.view.HeadImageView
                 android:id="@+id/iv_headImage"
                 app:border_thickness = "3dp"
+                android:layout_marginLeft="100dp"
+                android:layout_centerVertical="true"
                 app:border_outside_color = "#000000"
                 android:layout_width="43dp"
                 android:layout_height="43dp" />

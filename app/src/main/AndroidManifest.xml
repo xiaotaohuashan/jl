@@ -16,6 +16,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 配置bugly -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 极光推送 -->
+
+
     <permission
         android:name="com.jl.myapplication.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
@@ -64,6 +66,9 @@
         <activity android:name="com.jl.core.base.activity.WebviewActivity"/>
         <activity android:name=".jl_home.activity.MyCardActivity"/>
         <activity android:name=".jl_me.activity.PublishActivity"/>
+        <activity android:name=".jl_login.activity.OwnerResetPasswordActivity"/>
+        <activity android:name=".jl_login.activity.ChangePasswordActivity"/>
+        <activity android:name=".jl_login.activity.ChangePassActivity"/>
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

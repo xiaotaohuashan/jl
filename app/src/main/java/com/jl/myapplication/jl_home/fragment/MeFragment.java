@@ -1,5 +1,7 @@
 package com.jl.myapplication.jl_home.fragment;
 
+import static com.jl.myapplication.App.REQUEST_CODE_SCAN;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,14 +11,17 @@ import android.widget.Button;
 
 import com.jl.core.base.fragment.BaseFragment;
 import com.jl.core.utils.DataCleanManager;
+import com.jl.core.utils.SettingsUtil;
 import com.jl.core.view.dialog.TwoButtonMsgDialogUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMeBinding;
 import com.jl.myapplication.jl_home.activity.MyCardActivity;
+import com.jl.myapplication.jl_login.activity.ChangePassActivity;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_me.activity.PublishActivity;
 import com.jl.myapplication.jl_me.activity.SettingActivity;
 import com.jl.myapplication.jl_login.LoginActivity;
+import com.yzq.zxinglibrary.android.CaptureActivity;
 
 public class MeFragment extends BaseFragment {
     private FragmentMeBinding mBinding;
@@ -34,6 +39,8 @@ public class MeFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         TwoButtonMsgDialogUtil.dismiss();
+                        SettingsUtil.setTrueName("");
+                        SettingsUtil.setPassword("");
                         Intent intent = new Intent(getContext(), LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -74,6 +81,32 @@ public class MeFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PublishActivity.class);
                 startActivity(intent);
+            }
+        });
+        mBinding.changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ChangePassActivity.class);
+                startActivity(intent);
+            }
+        });
+        mBinding.scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), CaptureActivity.class);
+                /*ZxingConfig是配置类  可以设置是否显示底部布局，闪光灯，相册，是否播放提示音  震动等动能
+                 * 也可以不传这个参数
+                 * 不传的话  默认都为默认不震动  其他都为true
+                 * */
+
+                //ZxingConfig config = new ZxingConfig();
+                //config.setShowbottomLayout(true);//底部布局（包括闪光灯和相册）
+                //config.setPlayBeep(true);//是否播放提示音
+                //config.setShake(true);//是否震动
+                //config.setShowAlbum(true);//是否显示相册
+                //config.setShowFlashLight(true);//是否显示闪光灯
+                //intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
+                startActivityForResult(intent, REQUEST_CODE_SCAN);
             }
         });
     }

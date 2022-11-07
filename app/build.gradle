@@ -95,4 +95,6 @@ dependencies {
     implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
     //轮播图
     implementation 'io.github.youth5201314:banner:2.2.2'
+    /*添加依赖*/
+    implementation 'com.github.yuzhiqiang1993:zxing:2.0.0'
 }

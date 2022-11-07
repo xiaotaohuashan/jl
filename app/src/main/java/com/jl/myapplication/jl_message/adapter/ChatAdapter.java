@@ -187,24 +187,24 @@ public class ChatAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = createViewByType(msg, position);
-            holder.msgTime = (TextView) convertView.findViewById(R.id.jmui_send_time_txt);
-            holder.headIcon = (ImageView) convertView.findViewById(R.id.jmui_avatar_iv);
-            holder.displayName = (TextView) convertView.findViewById(R.id.jmui_display_name_tv);
-            holder.txtContent = (TextView) convertView.findViewById(R.id.jmui_msg_content);
-            holder.sendingIv = (ImageView) convertView.findViewById(R.id.jmui_sending_iv);
-            holder.resend = (ImageButton) convertView.findViewById(R.id.jmui_fail_resend_ib);
-            holder.ivDocument = (ImageView) convertView.findViewById(R.id.iv_document);
-            holder.text_receipt = (TextView) convertView.findViewById(R.id.text_receipt);
+            holder.msgTime = (TextView) convertView.findViewById(R.id.jmui_send_time_txt);//收发消息的时间
+            holder.headIcon = (ImageView) convertView.findViewById(R.id.jmui_avatar_iv);//头像
+            holder.displayName = (TextView) convertView.findViewById(R.id.jmui_display_name_tv);//名字
+            holder.txtContent = (TextView) convertView.findViewById(R.id.jmui_msg_content);//消息内容
+            holder.sendingIv = (ImageView) convertView.findViewById(R.id.jmui_sending_iv);//是否正在加载中
+            holder.resend = (ImageButton) convertView.findViewById(R.id.jmui_fail_resend_ib);//是否发送失败
+            holder.ivDocument = (ImageView) convertView.findViewById(R.id.iv_document);//文件
+            holder.text_receipt = (TextView) convertView.findViewById(R.id.text_receipt);//已读未读
             switch (msg.getContentType()) {
                 case text:
-                    holder.ll_businessCard = (LinearLayout) convertView.findViewById(R.id.ll_businessCard);
-                    holder.business_head = (ImageView) convertView.findViewById(R.id.business_head);
-                    holder.tv_nickUser = (TextView) convertView.findViewById(R.id.tv_nickUser);
-                    holder.tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);
+                    holder.ll_businessCard = (LinearLayout) convertView.findViewById(R.id.ll_businessCard);//名片
+                    holder.business_head = (ImageView) convertView.findViewById(R.id.business_head);//名片头像
+                    holder.tv_nickUser = (TextView) convertView.findViewById(R.id.tv_nickUser);//名片真正名字
+                    holder.tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);//名片昵称
                     break;
                 case image:
-                    holder.picture = (ImageView) convertView.findViewById(R.id.jmui_picture_iv);
-                    holder.progressTv = (TextView) convertView.findViewById(R.id.jmui_progress_tv);
+                    holder.picture = (ImageView) convertView.findViewById(R.id.jmui_picture_iv);//图像
+                    holder.progressTv = (TextView) convertView.findViewById(R.id.jmui_progress_tv);//加载进度
                     break;
                 case file:
                     String extra = msg.getContent().getStringExtra("video");
@@ -319,7 +319,7 @@ public class ChatAdapter extends BaseAdapter {
 //                }
                 break;
             case voice:
-                  handleVoiceMsg(msg, holder, position);
+//                  handleVoiceMsg(msg, holder, position);
                 break;
             case location:
 //                mController.handleLocationMsg(msg, holder, position);
@@ -842,21 +842,6 @@ public class ChatAdapter extends BaseAdapter {
                 default:
             }
 
-        } else {
-            if (mConv.getType() == ConversationType.group) {
-                if (msg.isAtMe()) {
-                    mConv.updateMessageExtra(msg, "isRead", true);
-                }
-                if (msg.isAtAll()) {
-                    mConv.updateMessageExtra(msg, "isReadAtAll", true);
-                }
-                holder.displayName.setVisibility(View.VISIBLE);
-                if (TextUtils.isEmpty(msg.getFromUser().getNickname())) {
-                    holder.displayName.setText(msg.getFromUser().getUserName());
-                } else {
-                    holder.displayName.setText(msg.getFromUser().getNickname());
-                }
-            }
         }
         if (holder.resend != null) {
             holder.resend.setOnClickListener(new View.OnClickListener() {
@@ -893,16 +878,6 @@ public class ChatAdapter extends BaseAdapter {
 
         // 接收图片
         if (msg.getDirect() == MessageDirect.receive) {
-            //群聊中显示昵称
-            if (mConv.getType() == ConversationType.group) {
-                holder.displayName.setVisibility(View.VISIBLE);
-                if (TextUtils.isEmpty(msg.getFromUser().getNickname())) {
-                    holder.displayName.setText(msg.getFromUser().getUserName());
-                } else {
-                    holder.displayName.setText(msg.getFromUser().getNickname());
-                }
-            }
-
             switch (msg.getStatus()) {
                 case receive_fail:
                     holder.picture.setImageResource(R.drawable.jmui_fetch_failed);
@@ -1123,8 +1098,10 @@ public class ChatAdapter extends BaseAdapter {
         final VoiceContent content = (VoiceContent) msg.getContent();
         final MessageDirect msgDirect = msg.getDirect();
         int length = content.getDuration();
-        String lengthStr = length + "";
-        holder.voiceLength.setText(lengthStr);
+        String lengthStr = length + "\"";
+        if (holder.voiceLength != null){
+            holder.voiceLength.setText(lengthStr);
+        }
         //控制语音长度显示，长度增幅随语音长度逐渐缩小
         int width = (int) (-0.04 * length * length + 4.526 * length + 75.214);
         holder.txtContent.setWidth((int) (width * mDensity));
@@ -1158,14 +1135,6 @@ public class ChatAdapter extends BaseAdapter {
             }
         } else switch (msg.getStatus()) {
             case receive_success:
-                if (mConv.getType() == ConversationType.group) {
-                    holder.displayName.setVisibility(View.VISIBLE);
-                    if (TextUtils.isEmpty(msg.getFromUser().getNickname())) {
-                        holder.displayName.setText(msg.getFromUser().getUserName());
-                    } else {
-                        holder.displayName.setText(msg.getFromUser().getNickname());
-                    }
-                }
                 holder.voice.setImageResource(R.drawable.jmui_receive_3);
                 // 收到语音，设置未读
                 if (msg.getContent().getBooleanExtra("isRead") == null
