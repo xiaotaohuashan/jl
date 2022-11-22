@@ -16,8 +16,11 @@ import android.widget.RelativeLayout;
 import com.bigkoo.pickerview.TimePickerView;
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.Const;
+import com.jl.core.utils.PicSelectUtil;
 import com.jl.core.utils.StringUtil;
+import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.R;
+import com.jl.myapplication.config.RequestCode;
 import com.jl.myapplication.databinding.ActivitySettingBinding;
 
 import com.luck.picture.lib.PictureSelector;
@@ -88,33 +91,34 @@ public class SettingActivity extends BaseActivity {
                 .runtime()
                 .permission(Permission.CAMERA,Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE)
                 .onGranted(permissions -> {
-                    showSelectDialog(1);
+//                    showSelectDialog(1);
+                    PicSelectUtil.chooseHeadPic(this, PictureConfig.CHOOSE_REQUEST);
                 })
                 .onDenied(permissions -> {
-                    // Storage permission are not allowed.
+                    ToastUtils.show( "请在应用管理中打开“读写存储”访问权限！");
                 })
                 .start();
     }
 
-    public void showSelectDialog(int maxNum) {
-        PictureSelector.create(this)
-                .openGallery(PictureConfig.TYPE_IMAGE)
-                .imageSpanCount(4)// 每行显示个数 int
-                .maxSelectNum(1)
-                .selectionMode(PictureConfig.SINGLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
-                .isSingleDirectReturn(true)//PictureConfig.SINGLE模式下是否直接返回
-                .previewImage(true)// 是否可预览图片 true or false
-                .isCamera(true)// 是否显示拍照按钮 true or false
-                .imageFormat(PictureMimeType.JPEG)// 拍照保存图片格式后缀,默认jpeg
-                .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                .setOutputCameraPath(Const.getImgPath())// 自定义拍照保存路径,可不填
-                .enableCrop(true)// 是否裁剪 true or false
-                .compress(true)// 是否压缩 true or false
-                .compressSavePath(Const.getImgPath())//压缩图片保存地址
-                .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
-                .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
-                .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
-    }
+//    public void showSelectDialog(int maxNum) {
+//        PictureSelector.create(this)
+//                .openGallery(PictureConfig.TYPE_IMAGE)
+//                .imageSpanCount(4)// 每行显示个数 int
+//                .maxSelectNum(1)
+//                .selectionMode(PictureConfig.SINGLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
+//                .isSingleDirectReturn(true)//PictureConfig.SINGLE模式下是否直接返回
+//                .previewImage(true)// 是否可预览图片 true or false
+//                .isCamera(true)// 是否显示拍照按钮 true or false
+//                .imageFormat(PictureMimeType.JPEG)// 拍照保存图片格式后缀,默认jpeg
+//                .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+//                .setOutputCameraPath(Const.getImgPath())// 自定义拍照保存路径,可不填
+//                .enableCrop(true)// 是否裁剪 true or false
+//                .compress(true)// 是否压缩 true or false
+//                .compressSavePath(Const.getImgPath())//压缩图片保存地址
+//                .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
+//                .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
+//                .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

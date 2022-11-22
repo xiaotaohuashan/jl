@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout style="@style/jmui_chat_item_send_layout"
-              xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:id="@+id/jmui_send_time_txt"
@@ -38,6 +38,7 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="20dp"
                 android:background="@drawable/jmui_voice_send"/>
+
 
             <TextView
                 android:layout_gravity="center_vertical"

@@ -54,9 +54,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         mBinding = getBindView();
-//        Intent it = new Intent(LoginActivity.this, MainActivity.class);
-//        startActivity(it);
-//        finish();
+        Intent it = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(it);
+        finish();
         countDownTimer = new CountDownTimer(COUNT_DOWN_PERIOD + 600, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {

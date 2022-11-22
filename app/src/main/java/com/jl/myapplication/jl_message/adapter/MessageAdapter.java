@@ -1,6 +1,7 @@
 package com.jl.myapplication.jl_message.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,11 @@ import com.jl.core.utils.ListUtil;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.ItemHomeBinding;
 import com.jl.myapplication.databinding.ItemMessageBinding;
+import com.jl.myapplication.jl_message.SortConvList;
+import com.jl.myapplication.jl_message.SortTopConvList;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cn.jpush.im.android.api.model.Conversation;
@@ -40,6 +45,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             this.mList = list;
         } else {
             this.mList.addAll(list);
+        }
+        notifyDataSetChanged();
+    }
+
+    List<Conversation> topConv = new ArrayList<>();
+    List<Conversation> forCurrent = new ArrayList<>();
+    public void sortConvList() {
+        forCurrent.clear();
+        topConv.clear();
+        int i = 0;
+        SortConvList sortConvList = new SortConvList();
+        Collections.sort(mList, sortConvList);
+        for (Conversation con : mList) {
+            if (!TextUtils.isEmpty(con.getExtra())) {
+                forCurrent.add(con);
+            }
+        }
+        topConv.addAll(forCurrent);
+        mList.removeAll(forCurrent);
+        if (topConv != null && topConv.size() > 0) {
+            SortTopConvList top = new SortTopConvList();
+            Collections.sort(topConv, top);
+            for (Conversation conv : topConv) {
+                mList.add(i, conv);
+                i++;
+            }
         }
         notifyDataSetChanged();
     }

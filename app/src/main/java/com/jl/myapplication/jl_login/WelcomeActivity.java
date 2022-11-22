@@ -21,7 +21,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        mCountDownTimer = new CountDownTimer(1000, 1000) {
+        mCountDownTimer = new CountDownTimer(1000, 3000) {
             @Override
             public void onTick(long l) {
             }

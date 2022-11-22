@@ -20,9 +20,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.jl.core.utils.DeviceUtils;
 import com.jl.myapplication.R;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
+import com.jl.myapplication.jl_message.adapter.ChatTwoAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +50,7 @@ public class RecordVoiceButton extends Button {
 
     private File myRecAudioFile;
 
-    private ChatAdapter mMsgListAdapter;
+    private ChatTwoAdapter mMsgListAdapter;
     private static final int MIN_INTERVAL_TIME = 1000;// 1s
     private final static int CANCEL_RECORD = 5;
     private final static int START_RECORD = 7;
@@ -69,7 +72,7 @@ public class RecordVoiceButton extends Button {
 
     private Handler mVolumeHandler;
     public static boolean mIsPressed = false;
-    private ListView mChatView;
+    private RecyclerView mChatView;
     private Context mContext;
     private Conversation mConv;
     private Timer timer = new Timer();
@@ -108,7 +111,7 @@ public class RecordVoiceButton extends Button {
                 IdHelper.getDrawable(mContext, "jmui_mic"), IdHelper.getDrawable(mContext, "jmui_cancel_record")};
     }
 
-    public void initConv(Conversation conv, ChatAdapter adapter, ListView chatView) {
+    public void initConv(Conversation conv, ChatTwoAdapter adapter, RecyclerView chatView) {
         this.mConv = conv;
         this.mMsgListAdapter = adapter;
         mChatView = chatView;
@@ -328,7 +331,7 @@ public class RecordVoiceButton extends Button {
                         mChatView.post(new Runnable() {
                             @Override
                             public void run() {
-                                mChatView.setSelection(mChatView.getAdapter().getCount() - 1);
+                                mChatView.scrollToPosition(mChatView.getAdapter().getItemCount() - 1);
                             }
                         });
                     } catch (FileNotFoundException e) {

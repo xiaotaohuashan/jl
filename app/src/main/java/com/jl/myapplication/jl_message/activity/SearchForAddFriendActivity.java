@@ -3,23 +3,17 @@ package com.jl.myapplication.jl_message.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.jl.core.base.activity.BaseActivity;
-import com.jl.core.log.LogUtils;
 import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
+import com.jl.myapplication.databinding.ActivitySearchForAddFriendBinding;
 import com.jl.myapplication.jl_message.InfoModel;
 
 import java.io.File;
@@ -32,14 +26,8 @@ import cn.jpush.im.android.api.model.UserInfo;
  * Created by ${chenyn} on 2017/3/13.
  */
 
-public class SearchForAddFriendActivity extends BaseActivity implements View.OnClickListener {
-
-    private EditText mEt_searchUser;
-    private Button mBtn_search;
-    private LinearLayout mSearch_result;
-    private TextView mSearch_name;
-    private Button mSearch_addBtn;
-    private ImageView mIv_clear;
+public class SearchForAddFriendActivity extends BaseActivity {
+    private ActivitySearchForAddFriendBinding mBinding;
 
     @Override
     protected int getLayoutId() {
@@ -48,32 +36,20 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
 
     @Override
     protected void initView() {
-        mEt_searchUser = (EditText) findViewById(R.id.et_searchUser);
-        mBtn_search = (Button) findViewById(R.id.btn_search);
-        mSearch_result = (LinearLayout) findViewById(R.id.search_result);
-        mSearch_name = (TextView) findViewById(R.id.search_name);
-        mSearch_addBtn = (Button) findViewById(R.id.search_addBtn);
-        mIv_clear = (ImageView) findViewById(R.id.iv_clear);
-        mBtn_search.setEnabled(false);
-        initTitle(true, true, "搜索用户", "", false, "");
-        initListener();
-    }
-
-    private void initListener() {
-        mEt_searchUser.addTextChangedListener(new TextChange());
-        mBtn_search.setOnClickListener(this);
-        mSearch_result.setOnClickListener(this);
-        mSearch_addBtn.setOnClickListener(this);
-        mIv_clear.setOnClickListener(this);
+        mBinding = getBindView();
+        mBinding.btnSearch.setEnabled(false);
+        setTitle("搜索用户");
     }
 
     @Override
-    public void onClick(View v) {
-        final Intent intent = new Intent();
-        switch (v.getId()) {
-            case R.id.btn_search:
+    protected void setListener() {
+        super.setListener();
+        mBinding.etSearchUser.addTextChangedListener(new TextChange());
+        mBinding.btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 hintKbTwo();
-                String searchUserName = mEt_searchUser.getText().toString();
+                String searchUserName = mBinding.etSearchUser.getText().toString();
                 if (!TextUtils.isEmpty(searchUserName)) {
                     // 极光IM获取用户信息
                     JMessageClient.getUserInfo(searchUserName, new GetUserInfoCallback() {
@@ -81,8 +57,8 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
                         public void gotResult(int responseCode, String responseMessage, UserInfo info) {
                             if (responseCode == 0) {
                                 InfoModel.getInstance().friendInfo = info;
-                                mSearch_result.setVisibility(View.VISIBLE);
-                                mSearch_addBtn.setVisibility(View.VISIBLE);
+                                mBinding.searchResult.setVisibility(View.VISIBLE);
+                                mBinding.searchAddBtn.setVisibility(View.VISIBLE);
                                 //这个接口会在本地寻找头像文件,不存在就异步拉取
                                 File avatarFile = info.getAvatarFile();
                                 if (avatarFile != null) {
@@ -90,32 +66,37 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
                                 } else {
                                     InfoModel.getInstance().setBitmap(BitmapFactory.decodeResource(getResources(), com.luck.picture.lib.R.drawable.ic_camera));
                                 }
-                                mSearch_name.setText(TextUtils.isEmpty(info.getNickname()) ? info.getUserName() : info.getNickname());
+                                    mBinding.searchName.setText(TextUtils.isEmpty(info.getNickname()) ? info.getUserName() : info.getNickname());
                             } else {
                                 ToastUtils.show(SearchForAddFriendActivity.this, "该用户不存在");
-                                mSearch_result.setVisibility(View.GONE);
+                                mBinding.searchResult.setVisibility(View.GONE);
                             }
                         }
                     });
                 }
-                break;
-            case R.id.search_result:
+            }
+        });
 
-                break;
-            case R.id.search_addBtn:
+        mBinding.searchAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 //聊天
+                Intent intent = new Intent();
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(App.TARGET_ID, InfoModel.getInstance().friendInfo.getUserName());
                 intent.putExtra(App.TARGET_APP_KEY, InfoModel.getInstance().friendInfo.getAppKey());
-                intent.setClass(this, ChatActivity.class);
+                intent.setClass(SearchForAddFriendActivity.this, ChatTwoActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.iv_clear:
-                mEt_searchUser.setText("");
-                break;
-        }
-    }
+            }
+        });
 
+        mBinding.ivClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBinding.etSearchUser.setText("");
+            }
+        });
+    }
 
     private class TextChange implements TextWatcher {
 
@@ -131,13 +112,13 @@ public class SearchForAddFriendActivity extends BaseActivity implements View.OnC
         @Override
         public void onTextChanged(CharSequence cs, int start, int before,
                                   int count) {
-            boolean feedback = mEt_searchUser.getText().length() > 0;
+            boolean feedback = mBinding.etSearchUser.getText().length() > 0;
             if (feedback) {
-                mIv_clear.setVisibility(View.VISIBLE);
-                mBtn_search.setEnabled(true);
+                mBinding.ivClear.setVisibility(View.VISIBLE);
+                mBinding.btnSearch.setEnabled(true);
             } else {
-                mIv_clear.setVisibility(View.GONE);
-                mBtn_search.setEnabled(false);
+                mBinding.ivClear.setVisibility(View.GONE);
+                mBinding.btnSearch.setEnabled(false);
             }
         }
     }

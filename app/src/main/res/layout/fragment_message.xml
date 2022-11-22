@@ -37,18 +37,41 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/tv_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="130dp"
-                android:text="搜索"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
-
-
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/tv_search"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/shape_bg_write_half"
+            android:layout_height="32dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="33dp"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:textSize="14sp"
+                android:hint="搜索用户"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="20dp"
+                android:src="@mipmap/cp_ic_search"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="#E8EDF3"/>
 
         <com.jl.core.view.LoadLayout
             android:id="@+id/mLoadLayout"

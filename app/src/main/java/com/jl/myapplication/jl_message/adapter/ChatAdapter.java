@@ -46,6 +46,9 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -189,24 +192,20 @@ public class ChatAdapter extends BaseAdapter {
             convertView = createViewByType(msg, position);
             holder.msgTime = (TextView) convertView.findViewById(R.id.jmui_send_time_txt);//收发消息的时间
             holder.headIcon = (ImageView) convertView.findViewById(R.id.jmui_avatar_iv);//头像
-            holder.displayName = (TextView) convertView.findViewById(R.id.jmui_display_name_tv);//名字
             holder.txtContent = (TextView) convertView.findViewById(R.id.jmui_msg_content);//消息内容
             holder.sendingIv = (ImageView) convertView.findViewById(R.id.jmui_sending_iv);//是否正在加载中
             holder.resend = (ImageButton) convertView.findViewById(R.id.jmui_fail_resend_ib);//是否发送失败
-            holder.ivDocument = (ImageView) convertView.findViewById(R.id.iv_document);//文件
             holder.text_receipt = (TextView) convertView.findViewById(R.id.text_receipt);//已读未读
             switch (msg.getContentType()) {
                 case text:
-                    holder.ll_businessCard = (LinearLayout) convertView.findViewById(R.id.ll_businessCard);//名片
-                    holder.business_head = (ImageView) convertView.findViewById(R.id.business_head);//名片头像
-                    holder.tv_nickUser = (TextView) convertView.findViewById(R.id.tv_nickUser);//名片真正名字
-                    holder.tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);//名片昵称
+
                     break;
                 case image:
                     holder.picture = (ImageView) convertView.findViewById(R.id.jmui_picture_iv);//图像
                     holder.progressTv = (TextView) convertView.findViewById(R.id.jmui_progress_tv);//加载进度
                     break;
                 case file:
+                    holder.ivDocument = (ImageView) convertView.findViewById(R.id.iv_document);//文件
                     String extra = msg.getContent().getStringExtra("video");
                     if (!TextUtils.isEmpty(extra)) {
                         holder.picture = (ImageView) convertView.findViewById(R.id.jmui_picture_iv);
@@ -222,6 +221,7 @@ public class ChatAdapter extends BaseAdapter {
                         holder.fileLoad = (TextView) convertView.findViewById(R.id.jmui_send_file_load);
                     }
                     break;
+
                 case voice:
                     holder.voice = (ImageView) convertView.findViewById(R.id.jmui_voice_iv);
                     holder.voiceLength = (TextView) convertView.findViewById(R.id.jmui_voice_length_tv);
@@ -238,6 +238,7 @@ public class ChatAdapter extends BaseAdapter {
             }
             convertView.setTag(holder);
         } else {
+            //拿出ViewHolder
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -248,14 +249,16 @@ public class ChatAdapter extends BaseAdapter {
             holder.msgTime.setText(timeFormat.getDetailTime());
             holder.msgTime.setVisibility(View.VISIBLE);
         } else {
-            long lastDate = mMsgList.get(position - 1).getCreateTime();
-            // 如果两条消息之间的间隔超过五分钟则显示时间
-            if (nowDate - lastDate > 300000) {
-                DateUtils timeFormat = new DateUtils(mContext, nowDate);
-                holder.msgTime.setText(timeFormat.getDetailTime());
-                holder.msgTime.setVisibility(View.VISIBLE);
-            } else {
-                holder.msgTime.setVisibility(View.GONE);
+            if (position > 0){
+                long lastDate = mMsgList.get(position - 1).getCreateTime();
+                // 如果两条消息之间的间隔超过五分钟则显示时间
+                if (nowDate - lastDate > 300000) {
+                    DateUtils timeFormat = new DateUtils(mContext, nowDate);
+                    holder.msgTime.setText(timeFormat.getDetailTime());
+                    holder.msgTime.setVisibility(View.VISIBLE);
+                } else {
+                    holder.msgTime.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -291,24 +294,14 @@ public class ChatAdapter extends BaseAdapter {
         // 显示聊天内容
         switch (msg.getContentType()) {
             case text:
-                TextContent textContent = (TextContent) msg.getContent();
-                String extraBusiness = textContent.getStringExtra("businessCard");
-                if (extraBusiness != null) {
-                    holder.txtContent.setVisibility(View.GONE);
-                    holder.ll_businessCard.setVisibility(View.VISIBLE);
-                    // 名片
-                    handleBusinessCard(msg, holder, position);
-                } else {
-                    holder.ll_businessCard.setVisibility(View.GONE);
-                    holder.txtContent.setVisibility(View.VISIBLE);
-                    final String content = ((TextContent) msg.getContent()).getText();
-                    holder.txtContent.setText(content);
-                    handleTextMsg(msg, holder, position);
-                }
+                final String content = ((TextContent) msg.getContent()).getText();
+                holder.txtContent.setText(content);
+                handleTextMsg(msg, holder, position);
                 break;
             case image:
                     handleImgMsg(msg, holder, position);
                 break;
+                //文件
             case file:
                 FileContent fileContent = (FileContent) msg.getContent();
                 String extra = fileContent.getStringExtra("video");
@@ -318,15 +311,18 @@ public class ChatAdapter extends BaseAdapter {
 //                    mController.handleFileMsg(msg, holder, position);
 //                }
                 break;
+                //音频
             case voice:
-//                  handleVoiceMsg(msg, holder, position);
+                  handleVoiceMsg(msg, holder, position);
                 break;
             case location:
-//                mController.handleLocationMsg(msg, holder, position);
+                handleLocationMsg(msg, holder, position);
                 break;
+                //事件通知
             case eventNotification:
 //                mController.handleGroupChangeMsg(msg, holder);
                 break;
+                //提示
             case prompt:
 //                mController.handlePromptMsg(msg, holder);
                 break;
@@ -401,6 +397,10 @@ public class ChatAdapter extends BaseAdapter {
                 return getItemViewType(position) == TYPE_SEND_IMAGE ?
                         mInflater.inflate(R.layout.jmui_chat_item_send_image, null) :
                         mInflater.inflate(R.layout.jmui_chat_item_receive_image, null);
+            case video:
+                return getItemViewType(position) == TYPE_SEND_VIDEO ?
+                        mInflater.inflate(R.layout.jmui_chat_item_send_video, null) :
+                        mInflater.inflate(R.layout.jmui_chat_item_receive_video, null);
             case file:
                 String extra = msg.getContent().getStringExtra("video");
                 if (!TextUtils.isEmpty(extra)) {
@@ -435,7 +435,6 @@ public class ChatAdapter extends BaseAdapter {
         public TextView msgTime;
         public ImageView headIcon;
         public ImageView ivDocument;
-        public TextView displayName;
         public TextView txtContent;
         public ImageView picture;
         public TextView progressTv;
@@ -451,10 +450,6 @@ public class ChatAdapter extends BaseAdapter {
         public LinearLayout videoPlay;
         public TextView alreadySend;
         public View locationView;
-        public LinearLayout ll_businessCard;
-        public ImageView business_head;
-        public TextView tv_nickUser;
-        public TextView tv_userName;
         public TextView text_receipt;
         public TextView fileLoad;
     }
@@ -468,96 +463,6 @@ public class ChatAdapter extends BaseAdapter {
     private void reverse(List<Message> list) {
         if (list.size() > 0) {
             Collections.reverse(list);
-        }
-    }
-
-    public void handleBusinessCard(final Message msg, final ViewHolder holder, int position) {
-        final TextContent[] textContent = {(TextContent) msg.getContent()};
-        final String[] mUserName = {textContent[0].getStringExtra("userName")};
-        final String mAppKey = textContent[0].getStringExtra("appKey");
-        holder.ll_businessCard.setTag(position);
-        int key = (mUserName[0] + mAppKey).hashCode();
-        UserInfo userInfo = mUserInfoMap.get(key);
-        if (userInfo != null) {
-            String name = userInfo.getNickname();
-            //如果没有昵称,名片上面的位置显示用户名
-            //如果有昵称,上面显示昵称,下面显示用户名
-            if (TextUtils.isEmpty(name)) {
-                holder.tv_userName.setText("");
-                holder.tv_nickUser.setText(mUserName[0]);
-            } else {
-                holder.tv_nickUser.setText(name);
-                holder.tv_userName.setText("用户名: " + mUserName[0]);
-            }
-            if (userInfo.getAvatarFile() != null) {
-                holder.business_head.setImageBitmap(BitmapFactory.decodeFile(userInfo.getAvatarFile().getAbsolutePath()));
-            } else {
-                holder.business_head.setImageResource(R.drawable.jmui_head_icon);
-            }
-        } else {
-            // 获取用户信息
-            JMessageClient.getUserInfo(mUserName[0], mAppKey, new GetUserInfoCallback() {
-                @Override
-                public void gotResult(int i, String s, UserInfo userInfo) {
-                    if (i == 0) {
-                        mUserInfoMap.put((mUserName[0] + mAppKey).hashCode(), userInfo);
-                        String name = userInfo.getNickname();
-                        //如果没有昵称,名片上面的位置显示用户名
-                        //如果有昵称,上面显示昵称,下面显示用户名
-                        if (TextUtils.isEmpty(name)) {
-                            holder.tv_userName.setText("");
-                            holder.tv_nickUser.setText(mUserName[0]);
-                        } else {
-                            holder.tv_nickUser.setText(name);
-                            holder.tv_userName.setText("用户名: " + mUserName[0]);
-                        }
-                        if (userInfo.getAvatarFile() != null) {
-                            holder.business_head.setImageBitmap(BitmapFactory.decodeFile(userInfo.getAvatarFile().getAbsolutePath()));
-                        } else {
-                            holder.business_head.setImageResource(R.drawable.jmui_head_icon);
-                        }
-                    } else {
-                        HandleResponseCode.onHandle(mContext, i, false);
-                    }
-                }
-            });
-        }
-
-        holder.ll_businessCard.setOnLongClickListener(mLongClickListener);
-        holder.ll_businessCard.setOnClickListener(new BusinessCard(mUserName[0], mAppKey, holder));
-        if (msg.getDirect() == MessageDirect.send) {
-            switch (msg.getStatus()) {
-                case created:
-                    if (null != mUserInfo) {
-                        holder.sendingIv.setVisibility(View.GONE);
-                        holder.resend.setVisibility(View.VISIBLE);
-                        holder.text_receipt.setVisibility(View.GONE);
-                    }
-                    break;
-                case send_success:
-                    holder.text_receipt.setVisibility(View.VISIBLE);
-                    holder.sendingIv.clearAnimation();
-                    holder.sendingIv.setVisibility(View.GONE);
-                    holder.resend.setVisibility(View.GONE);
-                    break;
-                case send_fail:
-                    holder.text_receipt.setVisibility(View.GONE);
-                    holder.sendingIv.clearAnimation();
-                    holder.sendingIv.setVisibility(View.GONE);
-                    holder.resend.setVisibility(View.VISIBLE);
-                    break;
-                case send_going:
-                    sendingTextOrVoice(holder, msg);
-                    break;
-            }
-        }
-        if (holder.resend != null) {
-            holder.resend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showResendDialog(holder, msg);
-                }
-            });
         }
     }
 
@@ -740,44 +645,6 @@ public class ChatAdapter extends BaseAdapter {
         public abstract void onContentLongClick(int position, View view);
     }
 
-    private class BusinessCard implements View.OnClickListener {
-        private String userName;
-        private String appKey;
-        private ViewHolder mHolder;
-
-        public BusinessCard(String name, String appKey, ViewHolder holder) {
-            this.userName = name;
-            this.appKey = appKey;
-            this.mHolder = holder;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mHolder.ll_businessCard != null && v.getId() == mHolder.ll_businessCard.getId()) {
-                JMessageClient.getUserInfo(userName, new GetUserInfoCallback() {
-                    @Override
-                    public void gotResult(int i, String s, UserInfo userInfo) {
-                        Intent intent = new Intent();
-                        if (i == 0) {
-                            if (userInfo.isFriend()) {
-                                intent.setClass(mContext, AboutUseActivity.class);
-                            } else {
-                                intent.setClass(mContext, SettingActivity.class);
-                            }
-                            intent.putExtra(App.TARGET_APP_KEY, appKey);
-                            intent.putExtra(App.TARGET_ID, userName);
-                            intent.putExtra("fromSearch", true);
-                            mContext.startActivity(intent);
-                        }else {
-                            ToastUtils.show(mContext, "获取信息失败,稍后重试");
-                        }
-                    }
-                });
-            }
-
-        }
-    }
-
     //找到撤回的那一条消息,并且用撤回后event下发的去替换掉这条消息在集合中的原位置
     List<Message> forDel;
     int i;
@@ -872,8 +739,10 @@ public class ChatAdapter extends BaseAdapter {
                 }
             });
         } else {
-            ImageView imageView = setPictureScale(jiguang, msg, path, holder.picture);
-            Glide.with(mContext).load(new File(path)).into(imageView);
+            if (holder.picture != null){
+                ImageView imageView = setPictureScale(jiguang, msg, path, holder.picture);
+                Glide.with(mContext).load(new File(path)).into(imageView);
+            }
         }
 
         // 接收图片
@@ -1473,5 +1342,156 @@ public class ChatAdapter extends BaseAdapter {
             e.printStackTrace();
             Toast.makeText(mContext, "无法打开该类型的文件", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setSendMsgs(Message msg) {
+        if (msg != null) {
+            mMsgList.add(msg);
+            mMsgQueue.offer(msg);
+        }
+
+        if (mMsgQueue.size() > 0) {
+            Message message = mMsgQueue.element();
+            if (mConv.getType() == ConversationType.single) {
+                sendNextImgMsg(message);
+            } else {
+                sendNextImgMsg(message);
+            }
+            notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 从发送队列中出列，并发送图片
+     *
+     * @param msg 图片消息
+     */
+    private void sendNextImgMsg(Message msg) {
+        MessageSendingOptions options = new MessageSendingOptions();
+        options.setNeedReadReceipt(true);
+        JMessageClient.sendMessage(msg, options);
+        msg.setOnSendCompleteCallback(new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                //出列
+                mMsgQueue.poll();
+                //如果队列不为空，则继续发送下一张
+                if (!mMsgQueue.isEmpty()) {
+                    sendNextImgMsg(mMsgQueue.element());
+                }
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    public void handleLocationMsg(final Message msg, final ViewHolder holder, int position) {
+        final LocationContent content = (LocationContent) msg.getContent();
+        String path = content.getStringExtra("path");
+
+        holder.location.setText(content.getAddress());
+        if (msg.getDirect() == MessageDirect.receive) {
+            switch (msg.getStatus()) {
+                case receive_going:
+                    break;
+                case receive_success:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap locationBitmap = createLocationBitmap(content.getLongitude(), content.getLatitude());
+                            if (locationBitmap != null) {
+                                mActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        holder.locationView.setVisibility(View.VISIBLE);
+                                        holder.picture.setImageBitmap(locationBitmap);
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
+                    break;
+                case receive_fail:
+                    break;
+            }
+        } else {
+            if (path != null && holder.picture != null) {
+                try {
+                    File file = new File(path);
+                    if (file.exists() && file.isFile()) {
+                        Glide.with(mContext).load(file).into(holder.picture);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            switch (msg.getStatus()) {
+                case created:
+                    holder.text_receipt.setVisibility(View.GONE);
+                    if (null != mUserInfo/* && !mUserInfo.isFriend()*/) {
+                        holder.sendingIv.setVisibility(View.GONE);
+                        holder.resend.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.sendingIv.setVisibility(View.VISIBLE);
+                        holder.resend.setVisibility(View.GONE);
+                    }
+                    break;
+                case send_going:
+                    sendingTextOrVoice(holder, msg);
+                    break;
+                case send_success:
+                    holder.text_receipt.setVisibility(View.VISIBLE);
+                    holder.sendingIv.clearAnimation();
+                    holder.sendingIv.setVisibility(View.GONE);
+                    holder.resend.setVisibility(View.GONE);
+                    break;
+                case send_fail:
+                    holder.sendingIv.clearAnimation();
+                    holder.text_receipt.setVisibility(View.GONE);
+                    holder.sendingIv.setVisibility(View.GONE);
+                    holder.resend.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+        if (holder.picture != null) {
+            holder.picture.setOnClickListener(new BtnOrTxtListener(position, holder));
+            holder.picture.setTag(position);
+            holder.picture.setOnLongClickListener(mLongClickListener);
+
+        }
+
+        if (holder.resend != null) {
+            holder.resend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    if (msg.getContent() != null) {
+                        showResendDialog(holder, msg);
+                    } else {
+                        Toast.makeText(mContext, "暂无外部存储", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    //位置消息接收方根据百度api生成位置周围图片
+    private Bitmap createLocationBitmap(Number longitude, Number latitude) {
+        String mapUrl = "http://api.map.baidu.com/staticimage?width=160&height=90&center="
+                + longitude + "," + latitude + "&zoom=18";
+        try {
+            URL url = new URL(mapUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(false);
+            conn.setDoInput(true);
+            conn.setConnectTimeout(5000);
+            conn.connect();
+            if (conn.getResponseCode() == 200) {
+                InputStream inputStream = conn.getInputStream();
+                return BitmapFactory.decodeStream(inputStream);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

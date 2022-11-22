@@ -28,6 +28,8 @@ import com.yzq.zxinglibrary.common.Constant;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jiguang.api.JCoreInterface;
+
 
 public class MainActivity extends BaseActivity {
 
@@ -100,7 +102,6 @@ public class MainActivity extends BaseActivity {
 
     private void createFragment() {
         mHomeFragment = new HomeFragment();
-        mMessageFragment = new MessageFragment();
         mOrganizationFragment = new OrganizationFragment();
         mMessageFragment = new MessageFragment();
         mWaitFragment = new ShoppingCarFragment();
@@ -187,5 +188,18 @@ public class MainActivity extends BaseActivity {
 //                result.setText("扫描结果为：" + content);
 //            }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        JCoreInterface.onPause(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        JCoreInterface.onResume(this);
+        mMessageFragment.sortConvList();
+        super.onResume();
     }
 }
