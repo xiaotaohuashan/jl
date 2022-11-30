@@ -60,7 +60,7 @@
         <activity android:name=".jl_login.GuideActivity" />
         <activity android:name=".jl_me.activity.SettingActivity" />
         <activity android:name=".jl_message.activity.SearchForAddFriendActivity" />
-        <activity android:name=".jl_message.activity.ChatTwoActivity" /> <!-- 友盟分享-微信 -->
+        <activity android:name=".jl_message.activity.ChatActivity" /> <!-- 友盟分享-微信 -->
         <activity android:name=".jl_home.activity.GoodsActivity"/>
         <activity android:name=".jl_home.activity.ImageBrowseActivity"/>
         <activity android:name=".jl_me.activity.AboutUseActivity"/>

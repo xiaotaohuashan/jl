@@ -85,7 +85,7 @@ public class SearchForAddFriendActivity extends BaseActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(App.TARGET_ID, InfoModel.getInstance().friendInfo.getUserName());
                 intent.putExtra(App.TARGET_APP_KEY, InfoModel.getInstance().friendInfo.getAppKey());
-                intent.setClass(SearchForAddFriendActivity.this, ChatTwoActivity.class);
+                intent.setClass(SearchForAddFriendActivity.this, ChatActivity.class);
                 startActivity(intent);
             }
         });

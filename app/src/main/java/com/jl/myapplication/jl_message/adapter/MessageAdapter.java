@@ -27,7 +27,7 @@ import cn.jpush.im.android.api.model.Conversation;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     private Context mContext;
-    private List<Conversation> mList;
+    private List<Conversation> mList = new ArrayList<>();
 
 
     public MessageAdapter(Context context) {

@@ -22,4 +22,6 @@ public class Configs {
 
     //支持数字字母和中文
     public static final String INPUT_REGEX = "[^a-zA-Z0-9\\u4E00-\\u9FA5]";
+
+    public static final String LIBRARY_PACKAGE_NAME = "cn.wildfire.chat.kit";
 }

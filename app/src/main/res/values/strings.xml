@@ -40,4 +40,12 @@
     <string name="verify_count_down_text">已发送(%ds)</string>
     <string name="password_not_equal">* 两次密码输入不一致</string>
     <string name="login_password_tip">* 密码长度8位以上，必须包含字母、数字两种元素</string>
+    <string name="size_over_limit_hint">所选的文件数量不得超过5个</string>
+    <string name="file_size_over_limit_hint">所选的文件大小总和不得超过10M</string>
+    <string name="jmui_loading">正在加载</string>
+    <string name="load_failed_toast">加载失败</string>
+    <string name="jmui_file_not_found_toast">文件丢失, 尝试重新获取</string>
+    <string name="sdcard_not_prepare_toast">sdcard尚未准备好</string>
+    <string name="download_file_succeed">下载成功</string>
+    <string name="download_file_failed">下载失败</string>
 </resources>

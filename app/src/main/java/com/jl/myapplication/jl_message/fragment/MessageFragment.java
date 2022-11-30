@@ -12,7 +12,7 @@ import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.databinding.FragmentMessageBinding;
 import com.jl.myapplication.jl_message.HandleResponseCode;
-import com.jl.myapplication.jl_message.activity.ChatTwoActivity;
+import com.jl.myapplication.jl_message.activity.ChatActivity;
 import com.jl.myapplication.jl_message.activity.SearchForAddFriendActivity;
 import com.jl.myapplication.jl_message.adapter.MessageAdapter;
 import com.jl.myapplication.jl_message.utils.SharePreferenceManager;
@@ -85,11 +85,11 @@ public class MessageFragment extends BaseFragment {
         mAdapter.setListener(new MessageAdapter.onItemClickListener() {
             @Override
             public void onItemClickListener(int position, List<Conversation> mList) {
-                Intent intent = new Intent(getContext(), ChatTwoActivity.class);
+                Intent intent = new Intent(getContext(), ChatActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(App.TARGET_ID, mList.get(position).getTargetId());
                 intent.putExtra(App.TARGET_APP_KEY, mList.get(position).getTargetAppKey());
-                intent.setClass(getContext(), ChatTwoActivity.class);
+                intent.setClass(getContext(), ChatActivity.class);
                 startActivity(intent);
             }
         });

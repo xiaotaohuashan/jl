@@ -11,12 +11,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -24,12 +24,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.jl.core.base.activity.BaseActivity;
 import com.jl.core.utils.EmoticonsKeyboardUtils;
+import com.jl.core.utils.FileUtils;
 import com.jl.core.utils.PicSelectUtil;
 import com.jl.core.utils.ToastUtils;
 import com.jl.myapplication.App;
 import com.jl.myapplication.R;
 import com.jl.myapplication.config.RequestCode;
-import com.jl.myapplication.databinding.ActivityChatTwoBinding;
+import com.jl.myapplication.databinding.ActivityChatBinding;
 import com.jl.myapplication.jl_me.activity.AboutUseActivity;
 import com.jl.myapplication.jl_message.AppBean;
 import com.jl.myapplication.jl_message.AppsAdapter;
@@ -37,7 +38,6 @@ import com.jl.myapplication.jl_message.ImageEvent;
 import com.jl.myapplication.jl_message.TipItem;
 import com.jl.myapplication.jl_message.TipView;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
-import com.jl.myapplication.jl_message.adapter.ChatTwoAdapter;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.yanzhenjie.permission.AndPermission;
@@ -50,35 +50,43 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.content.FileContent;
 import cn.jpush.im.android.api.content.ImageContent;
 import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.content.VideoContent;
+import cn.jpush.im.android.api.content.VoiceContent;
 import cn.jpush.im.android.api.enums.ContentType;
-import cn.jpush.im.android.api.enums.ConversationType;
 import cn.jpush.im.android.api.enums.MessageDirect;
 import cn.jpush.im.android.api.event.CommandNotificationEvent;
 import cn.jpush.im.android.api.event.OfflineMessageEvent;
+import cn.jpush.im.android.api.exceptions.JMFileSizeExceedException;
 import cn.jpush.im.android.api.model.Conversation;
-import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
+import retrofit2.http.Url;
 
 // 聊天页面
-public class ChatTwoActivity extends BaseActivity {
-    private ActivityChatTwoBinding mBinding;
+public class ChatActivity extends BaseActivity {
+    private ActivityChatBinding mBinding;
     // 聊天内容
     private Conversation mConv;
-    private ChatTwoAdapter mAdapter;
+    private ChatAdapter mAdapter;
     private String mTargetId;
     private String mTargetAppKey;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_chat_two;
+        return R.layout.activity_chat;
     }
 
     @Override
@@ -95,14 +103,14 @@ public class ChatTwoActivity extends BaseActivity {
             mConv = Conversation.createSingleConversation(mTargetId, mTargetAppKey);
         }
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new ChatTwoAdapter(mConv.getMessagesFromNewest(0, 18),this,mConv,longClickListener);
+        mAdapter = new ChatAdapter(mConv.getMessagesFromNewest(0, 18), this, mConv, longClickListener);
         mBinding.recyclerView.setAdapter(mAdapter);
 
         ArrayList<AppBean> mAppBeanList = new ArrayList<>();
         mAppBeanList.add(new AppBean(R.mipmap.icon_photo, "图片"));
         mAppBeanList.add(new AppBean(R.mipmap.icon_camera, "拍摄"));
         mAppBeanList.add(new AppBean(R.mipmap.icon_file, "文件"));
-//        mAppBeanList.add(new AppBean(R.mipmap.icon_loaction, "位置"));
+        mAppBeanList.add(new AppBean(R.mipmap.icon_loaction, "位置"));
 //        mAppBeanList.add(new AppBean(R.mipmap.businesscard, "名片"));
 //        mAppBeanList.add(new AppBean(R.mipmap.icon_audio, "视频"));
 //        mAppBeanList.add(new AppBean(R.mipmap.icon_voice, "语音"));
@@ -184,9 +192,9 @@ public class ChatTwoActivity extends BaseActivity {
         mBinding.btnMultimedia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBinding.gvApps.getVisibility() == GONE){
+                if (mBinding.gvApps.getVisibility() == GONE) {
                     mBinding.gvApps.setVisibility(VISIBLE);
-                }else {
+                } else {
                     mBinding.gvApps.setVisibility(GONE);
                 }
             }
@@ -217,7 +225,7 @@ public class ChatTwoActivity extends BaseActivity {
         }
     }
 
-    private ChatTwoAdapter.ContentLongClickListener longClickListener = new ChatTwoAdapter.ContentLongClickListener() {
+    private ChatAdapter.ContentLongClickListener longClickListener = new ChatAdapter.ContentLongClickListener() {
 
         @Override
         public void onContentLongClick(final int position, View view) {
@@ -235,7 +243,7 @@ public class ChatTwoActivity extends BaseActivity {
                     view.getLocationOnScreen(location);
                     float OldListY = (float) location[1];
                     float OldListX = (float) location[0];
-                    new TipView.Builder(ChatTwoActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
                             .addItem(new TipItem("复制"))
                             .addItem(new TipItem("转发"))
                             .addItem(new TipItem("删除"))
@@ -257,12 +265,12 @@ public class ChatTwoActivity extends BaseActivity {
                                                     clip.getText();
                                                 }
                                             }
-                                            Toast.makeText(ChatTwoActivity.this, "已复制", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatActivity.this, "已复制", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Toast.makeText(ChatTwoActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if (position == 1) {
-                                        Intent intent = new Intent(ChatTwoActivity.this, AboutUseActivity.class);
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
                                         App.forwardMsg.clear();
                                         App.forwardMsg.add(msg);
                                         startActivity(intent);
@@ -285,7 +293,7 @@ public class ChatTwoActivity extends BaseActivity {
                     view.getLocationOnScreen(location);
                     float OldListY = (float) location[1];
                     float OldListX = (float) location[0];
-                    new TipView.Builder(ChatTwoActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
                             .addItem(new TipItem("复制"))
                             .addItem(new TipItem("转发"))
                             .addItem(new TipItem("撤回"))
@@ -308,20 +316,20 @@ public class ChatTwoActivity extends BaseActivity {
                                                     clip.getText();
                                                 }
                                             }
-                                            Toast.makeText(ChatTwoActivity.this, "已复制", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatActivity.this, "已复制", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Toast.makeText(ChatTwoActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if (position == 1) {
                                         //转发
                                         if (msg.getContentType() == ContentType.text || msg.getContentType() == ContentType.image ||
                                                 (msg.getContentType() == ContentType.file && (msg.getContent()).getStringExtra("video") != null)) {
-                                            Intent intent = new Intent(ChatTwoActivity.this, AboutUseActivity.class);
+                                            Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
                                             App.forwardMsg.clear();
                                             App.forwardMsg.add(msg);
                                             startActivity(intent);
                                         } else {
-                                            Toast.makeText(ChatTwoActivity.this, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatActivity.this, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if (position == 2) {
                                         //撤回
@@ -329,7 +337,7 @@ public class ChatTwoActivity extends BaseActivity {
                                             @Override
                                             public void gotResult(int i, String s) {
                                                 if (i == 855001) {
-                                                    Toast.makeText(ChatTwoActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(ChatActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
                                                 } else if (i == 0) {
                                                     mAdapter.delMsgRetract(msg);
                                                 }
@@ -357,7 +365,7 @@ public class ChatTwoActivity extends BaseActivity {
                     view.getLocationOnScreen(location);
                     float OldListY = (float) location[1];
                     float OldListX = (float) location[0];
-                    new TipView.Builder(ChatTwoActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
                             .addItem(new TipItem("转发"))
                             .addItem(new TipItem("删除"))
                             .setOnItemClickListener(new TipView.OnItemClickListener() {
@@ -368,7 +376,7 @@ public class ChatTwoActivity extends BaseActivity {
                                         mConv.deleteMessage(msg.getId());
                                         mAdapter.removeMessage(msg);
                                     } else {
-                                        Intent intent = new Intent(ChatTwoActivity.this, AboutUseActivity.class);
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
                                         App.forwardMsg.clear();
                                         App.forwardMsg.add(msg);
                                         startActivity(intent);
@@ -387,7 +395,7 @@ public class ChatTwoActivity extends BaseActivity {
                     view.getLocationOnScreen(location);
                     float OldListY = (float) location[1];
                     float OldListX = (float) location[0];
-                    new TipView.Builder(ChatTwoActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
+                    new TipView.Builder(ChatActivity.this, mBinding.llMain, (int) OldListX + view.getWidth() / 2, (int) OldListY + view.getHeight())
                             .addItem(new TipItem("转发"))
                             .addItem(new TipItem("撤回"))
                             .addItem(new TipItem("删除"))
@@ -400,14 +408,14 @@ public class ChatTwoActivity extends BaseActivity {
                                             @Override
                                             public void gotResult(int i, String s) {
                                                 if (i == 855001) {
-                                                    Toast.makeText(ChatTwoActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(ChatActivity.this, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
                                                 } else if (i == 0) {
                                                     mAdapter.delMsgRetract(msg);
                                                 }
                                             }
                                         });
                                     } else if (position == 0) {
-                                        Intent intent = new Intent(ChatTwoActivity.this, AboutUseActivity.class);
+                                        Intent intent = new Intent(ChatActivity.this, AboutUseActivity.class);
                                         App.forwardMsg.clear();
                                         App.forwardMsg.add(msg);
                                         startActivity(intent);
@@ -429,7 +437,7 @@ public class ChatTwoActivity extends BaseActivity {
         }
     };
 
-    public  void setVideoText() {
+    public void setVideoText() {
         EmoticonsKeyboardUtils.hintKbTwo(this);
         if (mBinding.rlInput.isShown()) {
             mBinding.btnVoiceOrText.setImageResource(R.drawable.btn_voice_or_text_keyboard);
@@ -449,16 +457,16 @@ public class ChatTwoActivity extends BaseActivity {
                 Manifest.permission.RECORD_AUDIO)) {
             setVideoText();
             mBinding.btnVoice.initConv(mConv, mAdapter, mBinding.recyclerView);
-        }else {
+        } else {
             AndPermission.with(this)
                     .runtime()
-                    .permission(Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE,Permission.RECORD_AUDIO)
+                    .permission(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.RECORD_AUDIO)
                     .onGranted(permissions -> {
                         setVideoText();
                         mBinding.btnVoice.initConv(mConv, mAdapter, mBinding.recyclerView);
                     })
                     .onDenied(permissions -> {
-                        ToastUtils.show( "需要录音权限");
+                        ToastUtils.show("需要录音权限");
                     })
                     .start();
         }
@@ -472,13 +480,13 @@ public class ChatTwoActivity extends BaseActivity {
             case App.IMAGE_MESSAGE:
                 AndPermission.with(this)
                         .runtime()
-                        .permission(Permission.CAMERA,Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE)
+                        .permission(Permission.CAMERA, Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE)
                         .onGranted(permissions -> {
                             //type 0拍照  1相册
-                            PicSelectUtil.chooseMultiplePic(this, RequestCode.PICK_IMAGE, 9,1);
+                            PicSelectUtil.chooseMultiplePic(this, RequestCode.PICK_IMAGE, 9, 1);
                         })
                         .onDenied(permissions -> {
-                            ToastUtils.show( "请在应用管理中打开“读写存储”访问权限！");
+                            ToastUtils.show("请在应用管理中打开“读写存储”访问权限！");
                         })
                         .start();
                 break;
@@ -486,19 +494,19 @@ public class ChatTwoActivity extends BaseActivity {
             case App.TAKE_PHOTO_MESSAGE:
                 AndPermission.with(this)
                         .runtime()
-                        .permission(Permission.CAMERA,Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE)
+                        .permission(Permission.CAMERA, Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE)
                         .onGranted(permissions -> {
                             //type 0拍照  1相册
-                            PicSelectUtil.chooseMultiplePic(this, RequestCode.PICK_IMAGE, 9,0);
+                            PicSelectUtil.chooseMultiplePic(this, RequestCode.PICK_IMAGE, 9, 0);
                         })
                         .onDenied(permissions -> {
-                            ToastUtils.show( "请在应用管理中打开“读写存储”访问权限！");
+                            ToastUtils.show("请在应用管理中打开“读写存储”访问权限！");
                         })
                         .start();
                 break;
             //位置
             case App.TAKE_LOCATION:
-                if (ContextCompat.checkSelfPermission(ChatTwoActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
                     AndPermission.with(this)
                             .runtime()
@@ -526,18 +534,29 @@ public class ChatTwoActivity extends BaseActivity {
                 break;
             //文件
             case App.FILE_MESSAGE:
-                if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+//                if (ContextCompat.checkSelfPermission(this,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+//
+//                } else {
+//                    intent = new Intent(mContext, SendFileActivity.class);
+//                    intent.putExtra(App.TARGET_ID, mTargetId);
+//                    intent.putExtra(App.TARGET_APP_KEY, mTargetAppKey);
+//                    intent.putExtra(App.CONV_TYPE, mConv.getType());
+//                    startActivityForResult(intent, App.REQUEST_CODE_SEND_FILE);
+//                }
 
-                } else {
-                    intent = new Intent(mContext, SendFileActivity.class);
-                    intent.putExtra(App.TARGET_ID, mTargetId);
-                    intent.putExtra(App.TARGET_APP_KEY, mTargetAppKey);
-                    intent.putExtra(App.CONV_TYPE, mConv.getType());
-                    startActivityForResult(intent, App.REQUEST_CODE_SEND_FILE);
-                }
+                Intent intent1 = new Intent(Intent.ACTION_GET_CONTENT);
+                intent1.setType("*/*");      //   /*/ 此处是任意类型任意后缀
+                //intent.setType(“audio/*”) //选择音频
+
+                //intent.setType(“video/*”) //选择视频 （mp4 3gp 是android支持的视频格式）
+
+                //intent.setType(“video/*;image/*”)//同时选择视频和图片
+                intent1.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent1, 100);
+
                 break;
             //名片
             case App.BUSINESS_CARD:
@@ -560,7 +579,7 @@ public class ChatTwoActivity extends BaseActivity {
                     return;
                 }
                 List<LocalMedia> pic = PictureSelector.obtainMultipleResult(data);
-                for (int i = 0;i < pic.size();i++){
+                for (int i = 0; i < pic.size(); i++) {
                     //所有图片都在这里拿到
                     File file = new File(pic.get(i).getCompressPath());
                     ImageContent.createImageContentAsync(file, new ImageContent.CreateImageContentCallback() {
@@ -572,6 +591,50 @@ public class ChatTwoActivity extends BaseActivity {
                             }
                         }
                     });
+                }
+                break;
+            case 100:
+                if (data == null) {
+                    return;
+                }
+                Uri uri = data.getData();
+                String path = FileUtils.getPath(this, uri);
+                if (TextUtils.isEmpty(path)) {
+                    Toast.makeText(this, "选择文件错误", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String type = path.substring(path.lastIndexOf("."));
+                File file = new File(path);
+                switch (type) {
+                    case ".png":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".gif":
+                        try {
+                            Message msg = mConv.createSendImageMessage(file);
+                            handleSendMsg(msg);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+//                    case ".3gp":
+//                    case ".mpg":
+//                    case ".mpeg":
+//                    case ".mpe":
+//                    case ".mp4":
+//                    case ".avi":
+//                        break;
+                    default:
+                        try {
+                            Message msg = mConv.createSendFileMessage(file, "");
+                            handleSendMsg(msg);
+                        } catch (FileNotFoundException e) {
+                            Toast.makeText(mContext, mContext.getString(R.string.jmui_file_not_found_toast),
+                                    Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        } catch (JMFileSizeExceedException e) {
+                            e.printStackTrace();
+                        }
                 }
                 break;
         }

@@ -37,4 +37,6 @@
     <color name="l_gray">#dedede</color>
     <!--editText hint 颜色-->
     <color name="login_edit_hint_color">#C4C4CA</color>
+    <color name="send_file_action_bar_selected">#2DD0CF</color>
+    <color name="dialog_select_color">#d4d4d4</color>
 </resources>

@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jl.core.utils.DeviceUtils;
 import com.jl.myapplication.R;
 import com.jl.myapplication.jl_message.adapter.ChatAdapter;
-import com.jl.myapplication.jl_message.adapter.ChatTwoAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +48,7 @@ public class RecordVoiceButton extends Button {
 
     private File myRecAudioFile;
 
-    private ChatTwoAdapter mMsgListAdapter;
+    private ChatAdapter mMsgListAdapter;
     private static final int MIN_INTERVAL_TIME = 1000;// 1s
     private final static int CANCEL_RECORD = 5;
     private final static int START_RECORD = 7;
@@ -111,7 +109,7 @@ public class RecordVoiceButton extends Button {
                 IdHelper.getDrawable(mContext, "jmui_mic"), IdHelper.getDrawable(mContext, "jmui_cancel_record")};
     }
 
-    public void initConv(Conversation conv, ChatTwoAdapter adapter, RecyclerView chatView) {
+    public void initConv(Conversation conv, ChatAdapter adapter, RecyclerView chatView) {
         this.mConv = conv;
         this.mMsgListAdapter = adapter;
         mChatView = chatView;

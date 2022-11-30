@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
+
+import com.jl.myapplication.jl_message.utils.AttachmentStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -208,5 +211,16 @@ public class BitmapUtil {
             return bitmap;
         }
         return newbmp;
+    }
+
+    public static String extractThumbnail(String videoPath, String thumbPath) {
+        if (!AttachmentStore.isFileExist(thumbPath)) {
+            Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MICRO_KIND);
+            if (bitmap != null) {
+                AttachmentStore.saveBitmap(bitmap, thumbPath, true);
+                return thumbPath;
+            }
+        }
+        return thumbPath;
     }
 }
